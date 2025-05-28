@@ -9,7 +9,7 @@
         "dev": "bun run dev --workspace=client & bun run dev --workspace=server"
     },
     "workspaces": [
-        "./packages/client",
+        "./packages/web",
         "./packages/server"
     ],
     "keywords": [

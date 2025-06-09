@@ -1,16 +1,24 @@
 {
-    "name": "trpc-multi-tenant",
+    "name": "invoice",
     "version": "0.0.1",
     "author": "Sandip Gyawali",
     "main": "index.js",
     "description": "Multi-tenant architecture with dynamic role permission",
     "license": "ISC",
     "scripts": {
-        "dev": "bun run dev --workspace=client & bun run dev --workspace=server"
+        "build": "turbo build",
+        "dev": "turbo run dev",
+        "lint": "turbo lint",
+        "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    },
+    "packageManager": "bun@1.1.42",
+    "private": true,
+    "engines": {
+        "node": ">=20"
     },
     "workspaces": [
-        "./packages/web",
-        "./packages/server"
+        "./apps/web",
+        "./apps/server"
     ],
     "keywords": [
         "ExpressJS",
@@ -20,5 +28,9 @@
     ],
     "dependencies": {
         "@trpc/server": "^11.1.3"
+    },
+    "devDependencies": {
+        "turbo": "^2.5.4",
+        "typescript": "^5.8.3"
     }
 }

@@ -1,11 +1,15 @@
 import {
   boolean,
-  numeric,
+  integer,
   pgTable,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+import { tenants } from "./tenant";
 
+/**
+ * @user table.
+ */
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -13,6 +17,7 @@ export const user = pgTable("user", {
   emailVerified: boolean("email_verified")
     .$defaultFn(() => false)
     .notNull(),
+  tenantId: integer("tenant_id").references(() => tenants.id),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
@@ -21,6 +26,9 @@ export const user = pgTable("user", {
     .notNull(),
 });
 
+/**
+ * @account table.
+ */
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),

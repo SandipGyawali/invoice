@@ -1,5 +1,5 @@
 {
-  "name": "@multi-tenant/server",
+  "name": "@invoice/server",
   "type": "module",
   "main": "./index.ts",
   "version": "0.0.1",

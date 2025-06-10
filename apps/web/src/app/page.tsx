@@ -1,5 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useTRPC } from '@/utils/trpc';
 import { useMutation } from '@tanstack/react-query';
 
@@ -19,7 +20,7 @@ export default function Home() {
     <>
       <div className="">Hello</div>;
       <Button
-        variant="default"
+        variant="default" size="sm"
         // className="bg-red-500"
         // disabled={isPending}
         // onClick={() => mutate()}
@@ -27,6 +28,7 @@ export default function Home() {
       >
         Login
       </Button>
+      <Input></Input>
       <h1 className="text-primary">Hello</h1>
     </>
   );

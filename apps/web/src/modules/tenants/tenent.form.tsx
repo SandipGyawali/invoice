@@ -21,7 +21,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@/utils/trpc';
-import { Loader2 } from 'lucide-react';
+import { ChevronDownIcon, Loader2 } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 const _schema = z.object({
   name: z.string().trim(),
@@ -125,6 +131,82 @@ export function TenantForm() {
                     `}
                     {...field}
                   />
+                  <FormMessage className="text-red-500 text-sm" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name={`email`}
+              render={({ field, fieldState }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Subscription Start</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        id="date"
+                        className="w-full bg-transparent justify-between font-normal"
+                      >
+                        Select a Date
+                        {/* {date ? date.toLocaleDateString() : 'Select date'} */}
+                        <ChevronDownIcon />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-full overflow-hidden p-0"
+                      align="start"
+                    >
+                      <Calendar
+                        mode="single"
+                        // selected={date}
+                        captionLayout="dropdown"
+                        onSelect={(date) => {
+                          // setDate(date);
+                          // setOpen(false);
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage className="text-red-500 text-sm" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name={`email`}
+              render={({ field, fieldState }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Subscription Start</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        id="date"
+                        className="w-full bg-transparent justify-between font-normal"
+                      >
+                        Select a Date
+                        {/* {date ? date.toLocaleDateString() : 'Select date'} */}
+                        <ChevronDownIcon />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-full overflow-hidden p-0"
+                      align="start"
+                    >
+                      <Calendar
+                        mode="single"
+                        // selected={date}
+                        captionLayout="dropdown"
+                        onSelect={(date) => {
+                          // setDate(date);
+                          // setOpen(false);
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage className="text-red-500 text-sm" />
                 </FormItem>
               )}

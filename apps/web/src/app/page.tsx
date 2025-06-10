@@ -1,6 +1,7 @@
-"use client";
-import { useTRPC } from "@/utils/trpc";
-import { useMutation } from "@tanstack/react-query";
+'use client';
+import { Button } from '@/components/ui/button';
+import { useTRPC } from '@/utils/trpc';
+import { useMutation } from '@tanstack/react-query';
 
 export default function Home() {
   const trpc = useTRPC();
@@ -17,13 +18,16 @@ export default function Home() {
   return (
     <>
       <div className="">Hello</div>;
-      <button
-        disabled={isPending}
-        onClick={() => mutate()}
-        className="border rounded-lg"
+      <Button
+        variant="default"
+        // className="bg-red-500"
+        // disabled={isPending}
+        // onClick={() => mutate()}
+        // className="border rounded-lg"
       >
         Login
-      </button>
+      </Button>
+      <h1 className="text-primary">Hello</h1>
     </>
   );
 }

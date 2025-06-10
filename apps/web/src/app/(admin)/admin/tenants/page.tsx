@@ -11,9 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 
 function Page() {
   const trpc = useTRPC();
-
   const { data: tenantList } = useQuery(trpc.tenant.listTenant.queryOptions());
-
   console.log(tenantList);
 
   return (

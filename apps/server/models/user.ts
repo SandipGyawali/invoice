@@ -5,7 +5,7 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { tenants } from './tenant';
+import { tenants } from './tenant.ts';
 
 /**
  * @user table.

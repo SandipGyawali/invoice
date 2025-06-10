@@ -48,3 +48,37 @@ from role_permissions rp
 join roles r on rp.role_id = r.id
 join permissions p on rp.permission_id = p.id
 order by r.name, p.name;
+
+
+-- user table
+INSERT INTO "user" (
+  id, name, email, email_verified,
+  tenant_id, created_at, updated_at
+) VALUES (
+  'user001',                         -- id (string)
+  'John Doe',                        -- name
+  'john@example.com',               -- email
+  false,                             -- email_verified
+  'abc123',                          -- tenant_id
+  CURRENT_TIMESTAMP,                -- created_at
+  CURRENT_TIMESTAMP                 -- updated_at
+);
+
+
+-- userRoles
+INSERT INTO user_roles (
+  user_id, role_id
+) VALUES (
+  'user001', 1                      -- Assign Admin (role_id = 1)
+);
+
+-- verify role assignment
+SELECT 
+  u.id AS user_id,
+  u.name AS user_name,
+  r.name AS role_name,
+  r.tenant_id
+FROM user_roles ur
+JOIN "user" u ON ur.user_id = u.id
+JOIN roles r ON ur.role_id = r.id;
+

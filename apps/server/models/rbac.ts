@@ -7,8 +7,8 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { tenants } from './tenant';
-import { user } from './user';
+import { tenants } from './tenant.ts';
+import { user } from './user.ts';
 
 /**
  * Role Based Access control models

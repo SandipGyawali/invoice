@@ -1,8 +1,9 @@
-import "dotenv/config";
-import express, { type Application } from "express";
-import * as trpcExpress from "@trpc/server/adapters/express";
-import { appRouter } from "./router/index.ts";
-import cors from "cors";
+import 'dotenv/config';
+import express, { type Application } from 'express';
+import * as trpcExpress from '@trpc/server/adapters/express';
+import { appRouter } from './router/index.ts';
+import cors from 'cors';
+import { connectDb } from './db/db.ts';
 
 // created for each request
 const createContext = ({
@@ -21,14 +22,15 @@ class App {
 
   // private initialize(): void {}
 
-  private middlewares() {
+  private async middlewares() {
     this.app.use(cors());
-    this.app.set("trust proxy", 1);
-    this.app.disable("x-powered-by");
+    this.app.set('trust proxy', 1);
+    this.app.disable('x-powered-by');
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+    connectDb();
     this.app.use(
-      "/trpc",
+      '/trpc',
       trpcExpress.createExpressMiddleware({
         router: appRouter,
         createContext,

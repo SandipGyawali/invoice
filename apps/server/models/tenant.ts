@@ -10,13 +10,9 @@ import {
  * @tenant storage table.
  */
 export const tenants = pgTable('tenants', {
-  id: varchar('uuid', { length: 8 }).primaryKey(),
+  id: varchar('id', { length: 8 }).primaryKey(),
   name: text('name'),
   email: text('email').unique().notNull(),
-  // database information if the database is different
-  dbName: text('db_name'),
-  dbUserName: text('db_username'),
-  dbPassword: text('db_password'),
   status: integer().default(1), // 1 = Active, 0 = Inactive
   // subscription information
   subscriptionStart: timestamp('subscription_start'),

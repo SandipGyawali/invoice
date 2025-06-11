@@ -2,7 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 import _TrpcProvider from '@/providers/query.provider';
 import { Alexandria } from 'next/font/google';
+
 import { Navbar } from '@/components/custom/navbar';
+
 const alexandria = Alexandria({
   subsets: ['latin'],
   weight: ['400', '600'],
@@ -22,9 +24,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${alexandria.variable} antialiased`}>
+
         <_TrpcProvider>
           <Navbar></Navbar>
           {children}</_TrpcProvider>
+
       </body>
     </html>
   );

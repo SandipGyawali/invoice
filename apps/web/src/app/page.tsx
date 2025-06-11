@@ -1,6 +1,7 @@
 'use client';
 import { HeroSection } from '@/components/custom/HeroSection';
 import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useTRPC } from '@/utils/trpc';
 import { useMutation } from '@tanstack/react-query';
@@ -18,6 +19,8 @@ export default function Home() {
   console.log(isPending);
 
   return (
+
    <div><HeroSection></HeroSection></div>
+
   );
 }

@@ -1,33 +1,33 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const passwordSchema = z
   .string({
     errorMap: () => ({
-      message: "Please enter your password.",
+      message: 'Please enter your password.',
     }),
   })
-  .min(8, "Password must be atleast 8 characters long.")
-  .max(32, "Password must be less than 32 characters long.")
-  .regex(/[a-z]/, "Password must contain atleast 1 lowercase character.")
-  .regex(/[A-Z]/, "Password must contain atleast 1 uppercase character.")
-  .regex(/[0-9]/, "Password must contain atleast 1 number.")
+  .min(8, 'Password must be at least 8 characters long.')
+  .max(32, 'Password must be less than 32 characters long.')
+  .regex(/[a-z]/, 'Password must contain at least 1 lowercase character.')
+  .regex(/[A-Z]/, 'Password must contain at least 1 uppercase character.')
+  .regex(/[0-9]/, 'Password must contain at least 1 number.')
   .regex(
     /[!@#$%^&*()_+{}[\]\\|:"'<>,./`~ ]/,
-    "Password must contain atleast 1 symbol."
+    'Password must contain at least 1 symbol.'
   );
 
 export const phoneSchema = z
   .string({
     errorMap: () => ({
-      message: "Please enter your phone number.",
+      message: 'Please enter your phone number.',
     }),
   })
-  .regex(/^9[78][0-9]{8}$/, "Please enter a valid phone number.");
+  .regex(/^9[78][0-9]{8}$/, 'Please enter a valid phone number.');
 
 export const authSchema = {
   login: z.object({
     email: z
-      .string({ errorMap: () => ({ message: "Please enter a valid email." }) })
+      .string({ errorMap: () => ({ message: 'Please enter a valid email.' }) })
       .trim()
       .min(4)
       .email(),
@@ -35,11 +35,11 @@ export const authSchema = {
   }),
   signup: z.object({
     fullName: z
-      .string({ errorMap: () => ({ message: "Please enter your full name." }) })
+      .string({ errorMap: () => ({ message: 'Please enter your full name.' }) })
       .trim()
       .min(2),
     email: z
-      .string({ errorMap: () => ({ message: "Please enter your email." }) })
+      .string({ errorMap: () => ({ message: 'Please enter your email.' }) })
       .trim()
       .email(),
     password: passwordSchema,
@@ -48,7 +48,7 @@ export const authSchema = {
   }),
   forgot: z.object({
     email: z
-      .string({ errorMap: () => ({ message: "Please enter a valid email." }) })
+      .string({ errorMap: () => ({ message: 'Please enter a valid email.' }) })
       .trim()
       .min(4)
       .email(),

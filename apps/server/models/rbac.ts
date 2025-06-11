@@ -7,7 +7,8 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { tenants } from './tenant';
+import { tenants } from './tenant.ts';
+import { user } from './user.ts';
 
 /**
  * Role Based Access control models
@@ -45,4 +46,26 @@ export const rolePermissions = pgTable(
     createdAt: timestamp('created_at').$default(() => new Date()),
   },
   (t) => [primaryKey({ name: 'id', columns: [t.roleId, t.permissionId] })]
+);
+
+/**
+ * User-Role mapping table (Many-to-Many)
+ * Keeps track of multiple roles assigned to each user.
+ */
+export const userRoles = pgTable(
+  'user_roles',
+  {
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+
+    roleId: integer('role_id')
+      .notNull()
+      .references(() => roles.id, { onDelete: 'cascade' }),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.userId, table.roleId] }),
+    };
+  }
 );

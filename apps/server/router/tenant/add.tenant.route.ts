@@ -11,8 +11,8 @@ const _addTenantSchema = z.object({
   email: z.string().email().trim(),
   plan: z.string().trim(),
   status: z.number().default(1),
-  subscriptionStart: z.string(),
-  subscriptionEnd: z.string(),
+  subscriptionStart: z.coerce.date(),
+  subscriptionEnd: z.coerce.date(),
 });
 
 export const addTenantRoute = trpc.procedure

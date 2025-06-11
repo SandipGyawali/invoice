@@ -1,5 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useTRPC } from '@/utils/trpc';
 import { useMutation } from '@tanstack/react-query';
@@ -30,6 +31,7 @@ export default function Home() {
       </Button>
       <Input></Input>
       <h1 className="text-primary">Hello</h1>
+      <Form ></Form>
     </>
   );
 }

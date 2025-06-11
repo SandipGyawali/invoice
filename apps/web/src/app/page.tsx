@@ -1,4 +1,5 @@
 'use client';
+import { HeroSection } from '@/components/custom/HeroSection';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTRPC } from '@/utils/trpc';
@@ -17,19 +18,6 @@ export default function Home() {
   console.log(isPending);
 
   return (
-    <>
-      <div className="">Hello</div>;
-      <Button
-        variant="default" size="sm"
-        // className="bg-red-500"
-        // disabled={isPending}
-        // onClick={() => mutate()}
-        // className="border rounded-lg"
-      >
-        Login
-      </Button>
-      <Input></Input>
-      <h1 className="text-primary">Hello</h1>
-    </>
+   <div><HeroSection></HeroSection></div>
   );
 }

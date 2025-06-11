@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/card';
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -18,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@/utils/trpc';
 import { ChevronDownIcon, Loader2 } from 'lucide-react';
@@ -28,14 +29,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { TRPCClientError } from '@trpc/client';
 
 const _schema = z.object({
-  name: z.string().trim(),
+  name: z.string(),
   email: z.string().email().trim(),
   plan: z.string().trim().default('basic'),
   status: z.number().default(1),
-  subscriptionStart: z.string().default(new Date().toString()),
-  subscriptionEnd: z.string().default(new Date().toString()),
+  subscriptionStart: z.coerce.date(),
+  subscriptionEnd: z.coerce.date(),
 });
 
 export function TenantForm() {
@@ -59,20 +63,29 @@ export function TenantForm() {
       {
         onSuccess: () => {},
         onError: (err) => {
-          const parsedError = JSON.parse(err?.message);
-
-          if (Array.isArray(parsedError)) {
-            parsedError?.forEach((err) => {
-              const fieldName = err.path?.[0];
-              if (fieldName) {
-                form.setError(fieldName, {
-                  type: err.code,
-                  message: err.message,
-                });
-              }
-            });
-          } else {
+          if (err instanceof TRPCClientError) {
+            if (err instanceof ZodError) {
+              console.log(err);
+              console.log(err.message);
+              console.log('This is toast error');
+            }
           }
+          // const parsedError = JSON.parse(err?.message);
+          // console.log(parsedError);
+
+          // if (Array.isArray(parsedError)) {
+          //   parsedError?.forEach((err) => {
+          //     const fieldName = err.path?.[0];
+          //     if (fieldName) {
+          //       form.setError(fieldName, {
+          //         type: err.code,
+          //         message: err.message,
+          //       });
+          //     }
+          //   });
+          // } else {
+          //   toast.error(parsedError?.message);
+          // }
         },
       }
     );
@@ -138,21 +151,26 @@ export function TenantForm() {
 
             <FormField
               control={form.control}
-              name={`email`}
-              render={({ field, fieldState }) => (
+              name={`subscriptionStart`}
+              render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Subscription Start</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        id="date"
-                        className="w-full bg-transparent justify-between font-normal"
-                      >
-                        Select a Date
-                        {/* {date ? date.toLocaleDateString() : 'Select date'} */}
-                        <ChevronDownIcon />
-                      </Button>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'w-full bg-transparent justify-between font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value
+                            ? format(field?.value, 'PPP')
+                            : 'Select a Date'}
+                          <ChevronDownIcon />
+                        </Button>
+                      </FormControl>
                     </PopoverTrigger>
                     <PopoverContent
                       className="w-full overflow-hidden p-0"
@@ -160,12 +178,9 @@ export function TenantForm() {
                     >
                       <Calendar
                         mode="single"
-                        // selected={date}
+                        selected={field.value}
+                        onSelect={field.onChange}
                         captionLayout="dropdown"
-                        onSelect={(date) => {
-                          // setDate(date);
-                          // setOpen(false);
-                        }}
                       />
                     </PopoverContent>
                   </Popover>
@@ -176,21 +191,26 @@ export function TenantForm() {
 
             <FormField
               control={form.control}
-              name={`email`}
-              render={({ field, fieldState }) => (
+              name={`subscriptionEnd`}
+              render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Subscription Start</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        id="date"
-                        className="w-full bg-transparent justify-between font-normal"
-                      >
-                        Select a Date
-                        {/* {date ? date.toLocaleDateString() : 'Select date'} */}
-                        <ChevronDownIcon />
-                      </Button>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'w-full bg-transparent justify-between font-normal',
+                            !field.value && 'text-muted-foreground'
+                          )}
+                        >
+                          {field.value
+                            ? format(field?.value, 'PPP')
+                            : 'Select a Date'}
+                          <ChevronDownIcon />
+                        </Button>
+                      </FormControl>
                     </PopoverTrigger>
                     <PopoverContent
                       className="w-full overflow-hidden p-0"
@@ -198,12 +218,9 @@ export function TenantForm() {
                     >
                       <Calendar
                         mode="single"
-                        // selected={date}
+                        selected={field.value}
+                        onSelect={field.onChange}
                         captionLayout="dropdown"
-                        onSelect={(date) => {
-                          // setDate(date);
-                          // setOpen(false);
-                        }}
                       />
                     </PopoverContent>
                   </Popover>

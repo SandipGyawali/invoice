@@ -23,7 +23,7 @@ export const tenants = pgTable('tenants', {
   createdAt: timestamp('created_at').$defaultFn(
     () => /* @__PURE__ */ new Date()
   ),
-  updatedAt: timestamp('updated_at').$onUpdateFn(
+  updatedAt: timestamp('updated_at').$onUpdate(
     () => /* @__PURE__ */ new Date()
   ),
 });

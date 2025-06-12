@@ -9,7 +9,7 @@ function Page() {
   const router = useRouter();
   return (
     <>
-      <div className="pt-2">
+      <div className="max-w-full w-full lg:max-w-3xl mx-auto  space-y-3 p-2 sm:py-4 lg:px-6">
         <Button
           className="w-fit"
           variant="ghost"
@@ -18,10 +18,9 @@ function Page() {
           }}
         >
           <ArrowLeft />
+          Back
         </Button>
-      </div>
 
-      <div className="max-w-full p-2 sm:py-4 lg:px-6">
         <TenantForm />
       </div>
     </>

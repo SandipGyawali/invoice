@@ -88,7 +88,7 @@ export function TenantForm() {
   }
 
   return (
-    <Card className="max-w-full lg:max-w-3xl mx-auto">
+    <Card>
       <form
         action=""
         onSubmit={form.handleSubmit(submit)}

@@ -3,6 +3,7 @@ import './globals.css';
 import _TrpcProvider from '@/providers/query.provider';
 import { Alexandria } from 'next/font/google';
 import { Toaster } from '@invoice/ui/sonner';
+import { ThemeProvider } from '@/providers/theme-provider';
 
 const alexandria = Alexandria({
   subsets: ['latin'],
@@ -23,8 +24,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${alexandria.variable} antialiased`}>
-        <_TrpcProvider>{children}</_TrpcProvider>
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <_TrpcProvider>{children}</_TrpcProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

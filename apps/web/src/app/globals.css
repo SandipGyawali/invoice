@@ -11,6 +11,9 @@
 @plugin "@tailwindcss/typography";
 @plugin "tailwindcss-animate";
 
+/* package/ui watch mode  */
+@source "../../../../packages/ui/";
+
 :root {
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.269 0 0);
@@ -632,7 +635,7 @@
 
   --color-secondary-950: var(--secondary-950);
 
-  --color-secondary-1000: var(--secondary-1000)
+  --color-secondary-1000: var(--secondary-1000);
 }
 
 @utility container {

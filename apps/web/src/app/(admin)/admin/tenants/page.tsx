@@ -1,12 +1,12 @@
 'use client';
-import { Button } from '@/components/ui/button';
+import { Button } from '@invoice/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@invoice/ui/card';
 import { ROUTES } from '@/enums/route.enum';
 import { useTRPC } from '@/utils/trpc';
 import { useQuery } from '@tanstack/react-query';

@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/button';
+import { Button } from '@invoice/ui/button';
 import { ROUTES } from '@/enums/route.enum';
 import { TenantForm } from '@/modules/tenants/tenent.form';
 import { ArrowLeft } from 'lucide-react';

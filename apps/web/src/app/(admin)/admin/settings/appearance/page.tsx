@@ -9,28 +9,19 @@ import {
   CardTitle,
 } from '@invoice/ui/card';
 import * as React from 'react';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@invoice/ui/dropdown-menu';
+import ToggleThemeCard from '@/components/toggle-theme-card';
 
 function Page() {
-  const { setTheme } = useTheme();
-
   return (
     <Card>
       <CardHeader className="border-b">
-        <CardTitle>Appearance Settings</CardTitle>
+        <CardTitle className="text-lg">Appearance Settings</CardTitle>
         <CardDescription className="text-muted-foreground">
           Choose your preferred theme to personalize your experience.
         </CardDescription>
       </CardHeader>
       <CardContent className="mt-4">
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">
               <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
@@ -49,7 +40,9 @@ function Page() {
               System
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
+
+        <ToggleThemeCard />
       </CardContent>
 
       <CardFooter className="border-t p-4 flex items-center justify-end">

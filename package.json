@@ -18,7 +18,9 @@
     },
     "workspaces": [
         "./apps/web",
-        "./apps/server"
+        "./apps/server",
+        "./packages/ui",
+        "./packages/tailwind"
     ],
     "keywords": [
         "ExpressJS",

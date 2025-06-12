@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@invoice/ui/dropdown-menu';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -21,7 +21,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar';
+} from '@invoice/ui/sidebar';
 
 export function NavDocuments({
   items,

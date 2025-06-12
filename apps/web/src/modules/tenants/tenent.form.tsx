@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/button';
+import { Button } from '@invoice/ui/button';
 import {
   Card,
   CardContent,
@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from '@invoice/ui/card';
 import {
   Form,
   FormControl,
@@ -15,22 +15,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@invoice/ui/form';
+import { Input } from '@invoice/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z, ZodError } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@/utils/trpc';
 import { ChevronDownIcon, Loader2 } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Calendar } from '@invoice/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@invoice/ui/popover';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { cn } from '@invoice/ui/lib/utils';
 import { TRPCClientError } from '@trpc/client';
 
 const _schema = z.object({

@@ -29,6 +29,13 @@
       "when": 1749542708372,
       "tag": "0003_friendly_rafael_vega",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1749717538525,
+      "tag": "0004_seed-users-roles-tenants",
+      "breakpoints": true
     }
   ]
 }

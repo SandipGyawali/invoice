@@ -20,13 +20,15 @@
         "./apps/web",
         "./apps/server",
         "./packages/ui",
-        "./packages/tailwind"
+        "./packages/tailwind",
+        "./apps/landing"
     ],
     "keywords": [
         "ExpressJS",
         "NextJS",
         "tRPC",
-        "typescript"
+        "typescript",
+        "tailwindcss"
     ],
     "dependencies": {
         "@trpc/server": "^11.1.3"

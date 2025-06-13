@@ -21,7 +21,7 @@ function Page() {
         <CardContent className="mt-4">Delete your account</CardContent>
 
         <CardFooter className="border-t p-4 flex items-center justify-end">
-          <Button type="submit" size="sm">
+          <Button type="submit" variant="destructive" size="sm">
             Submit
           </Button>
         </CardFooter>

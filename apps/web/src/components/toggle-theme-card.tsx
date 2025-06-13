@@ -64,13 +64,13 @@ export default function ToggleThemeCard({
       >
         {/* Header */}
         <div className="p-5 lg:p-6">
-          <div className="flex items-center justify-between mb-6">
+          {/* <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
                 {themeName}
               </h3>
             </div>
-          </div>
+          </div> */}
 
           {/* Devices */}
           <div className="grid grid-cols-2 gap-4 mb-6">

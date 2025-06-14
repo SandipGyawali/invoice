@@ -271,3 +271,6 @@ next-env.d.ts
 .turbo/*
 
 logs
+
+
+.turbo

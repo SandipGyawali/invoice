@@ -7,8 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@invoice/ui/card';
+import { useTranslations } from 'next-intl';
 
 function Page() {
+  const t = useTranslations();
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       <Card>
@@ -22,7 +25,7 @@ function Page() {
 
         <CardFooter className="border-t p-4 flex items-center justify-end">
           <Button type="submit" variant="destructive" size="sm">
-            Submit
+            {t('submit')}
           </Button>
         </CardFooter>
       </Card>

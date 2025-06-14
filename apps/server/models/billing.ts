@@ -7,7 +7,7 @@ import {
   text,
   timestamp,
 } from 'drizzle-orm/pg-core';
-import { user } from './user';
+import { user } from './user.ts';
 
 export const subscriptionStatusEnum = pgEnum('subscription_status', [
   'incomplete',

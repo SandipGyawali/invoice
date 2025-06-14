@@ -7,8 +7,11 @@ import {
 import { SettingsLayout } from '@/modules/shared/settings/settings-layout';
 import { Button } from '@invoice/ui/button';
 import { LogOut, SettingsIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 function Layout({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('Settings');
+
   return (
     <PageContainer>
       <PageHeader>
@@ -18,7 +21,8 @@ function Layout({ children }: { children: React.ReactNode }) {
               <div className="p-2 bg-muted rounded-md">
                 <SettingsIcon />
               </div>
-              Settings
+              {t('settings')}
+              {/* Settings */}
               {/* <Trans i18nKeys="settings" /> */}
             </PageTitle>
           </div>

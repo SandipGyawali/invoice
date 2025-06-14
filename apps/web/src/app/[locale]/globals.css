@@ -12,7 +12,7 @@
 @plugin "tailwindcss-animate";
 
 /* package/ui watch mode  */
-@source "../../../../packages/ui/";
+@source "../../../../../packages/ui/";
 
 :root {
   --card: oklch(1 0 0);

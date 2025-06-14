@@ -1,4 +1,4 @@
-import { trpc } from '../../lib/trpc.ts';
+import { trpc } from '~/lib/trpc.ts';
 import { addTenantRoute } from './add.tenant.route.ts';
 import { listTenantRoute } from './list.tenant.route.ts';
 

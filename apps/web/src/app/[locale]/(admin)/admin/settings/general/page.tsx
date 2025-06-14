@@ -1,4 +1,5 @@
 'use client';
+import LocaleSwitcher from '@/components/locale-switcher';
 import {
   Card,
   CardContent,
@@ -6,19 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@invoice/ui/card';
-import SearchableDropdown from '@invoice/ui/searchable-dropdown';
 
 function General() {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">Language</CardTitle>
-        <CardDescription>
-          Choose your preferred language to your personalize experience
-        </CardDescription>
+        <CardDescription>Choose your preferred language</CardDescription>
       </CardHeader>
-      <CardContent className="mt-4">
-        <SearchableDropdown />
+      <CardContent>
+        <LocaleSwitcher />
       </CardContent>
     </Card>
   );

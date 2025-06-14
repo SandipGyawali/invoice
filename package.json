@@ -21,6 +21,7 @@
         "./apps/server",
         "./packages/ui",
         "./packages/tailwind",
+        "./packages/languages",
         "./apps/landing"
     ],
     "keywords": [

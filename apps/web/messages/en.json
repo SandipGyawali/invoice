@@ -1,0 +1,12 @@
+{
+    "Settings": {
+        "general": "General",
+        "appearance": "Appearance",
+        "profile": "Profile",
+        "settings": "Settings"
+    },
+    "button": {
+        "submit": "Submit",
+        "save": "Save"
+    }
+}

@@ -7,7 +7,7 @@ import { ThemeProvider } from '@/providers/theme-provider';
 
 const alexandria = Alexandria({
   subsets: ['latin'],
-  weight: ['400', '600'],
+  weight: ['100', '200', '300', '400', '600'],
   variable: '--font-sans',
 });
 

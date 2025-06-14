@@ -43,6 +43,13 @@
       "when": 1749791431435,
       "tag": "0005_dusty_goliath",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1749896531670,
+      "tag": "0006_stale_alice",
+      "breakpoints": true
     }
   ]
 }

@@ -37,6 +37,9 @@ export const permissions = pgTable('permissions', {
 export const rolePermissions = pgTable(
   'role_permissions',
   {
+    tenantId: varchar('tenant_id').references(() => tenants.id, {
+      onDelete: 'cascade',
+    }),
     roleId: integer('role_id')
       .references(() => roles.id, { onDelete: 'cascade' })
       .notNull(),
@@ -55,10 +58,12 @@ export const rolePermissions = pgTable(
 export const userRoles = pgTable(
   'user_roles',
   {
+    tenantId: varchar('tenant_id').references(() => tenants.id, {
+      onDelete: 'cascade',
+    }),
     userId: text('user_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-
     roleId: integer('role_id')
       .notNull()
       .references(() => roles.id, { onDelete: 'cascade' }),

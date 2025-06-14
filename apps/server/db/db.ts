@@ -1,6 +1,6 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
-import * as schema from "../models/index.ts";
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
+import * as schema from '~/models/index.ts';
 // import { Logger } from "~/utils/logger";
 
 /**
@@ -14,7 +14,7 @@ const conn =
   globalForDb.conn ??
   new Pool({ connectionString: process.env.DB_URL, max: 1 });
 
-if (process.env.NODE_ENV !== "production") globalForDb.conn = conn;
+if (process.env.NODE_ENV !== 'production') globalForDb.conn = conn;
 
 export const db = drizzle(conn, { schema, logger: true });
 

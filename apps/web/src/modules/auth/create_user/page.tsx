@@ -1,5 +1,6 @@
 'use client';
-import { useSignUpStore } from '@/store/signupStore';
+import { Link } from '@/i18n/navigation';
+import { useTRPC } from '@/utils/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@invoice/ui/button';
 import {
@@ -12,7 +13,7 @@ import {
 } from '@invoice/ui/form';
 import { Input } from '@invoice/ui/input';
 import { cn } from '@invoice/ui/lib/utils';
-import { Dispatch, SetStateAction } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -24,25 +25,17 @@ export const _schema = z.object({
 type _Schema = z.infer<typeof _schema>;
 
 interface Props {
-  currentStep: number;
-  setCurrentStep: Dispatch<SetStateAction<number>>;
-  className: string;
-  props: any;
+  className?: string;
+  props?: any;
 }
 
-function SignUpStep2Form({ setCurrentStep, className, props }: Props) {
-  const { user, updateUser } = useSignUpStore();
+function CreateUserForm({ className, props }: Props) {
   const form = useForm<_Schema>({
     resolver: zodResolver(_schema),
-    defaultValues: {
-      ...user,
-    },
+    defaultValues: {},
   });
 
-  const submit = (input: _Schema) => {
-    updateUser(input);
-    setCurrentStep(3);
-  };
+  const submit = (input: _Schema) => {};
 
   return (
     <Form {...form}>
@@ -52,12 +45,12 @@ function SignUpStep2Form({ setCurrentStep, className, props }: Props) {
         {...props}
       >
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold">Create a User</h1>
+          <h1 className="text-2xl font-bold">Login to your Account</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            Enter your information to create a user <br /> for the organization
+            Enter credentials below to login to your account
           </p>
         </div>
-        <div className="grid gap-8">
+        <div className="grid gap-8 mt-6">
           <FormField
             control={form.control}
             name="name"
@@ -105,12 +98,19 @@ function SignUpStep2Form({ setCurrentStep, className, props }: Props) {
           />
 
           <Button type="submit" className="w-full">
-            Save
+            Login
           </Button>
+        </div>
+
+        <div className="text-center text-sm">
+          Don&apos;t have an account?{' '}
+          <Link href="/auth/login" className="underline underline-offset-4">
+            Login
+          </Link>
         </div>
       </form>
     </Form>
   );
 }
 
-export default SignUpStep2Form;
+export default CreateUserForm;

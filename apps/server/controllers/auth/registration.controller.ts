@@ -3,13 +3,17 @@ import { publicProcedure, trpc } from '~/lib/trpc.ts';
 import { isNameValid } from '~/utils/validName.ts';
 import { isEmailTemporary } from '~/utils/temp.mail.domains.ts';
 import { db } from '~/db/db.ts';
-import { user } from '~/models/user.ts';
+import { account, user } from '~/models/user.ts';
 import { eq } from 'drizzle-orm';
 import { tenants } from '~/models/tenant.ts';
+import { hash } from 'bcryptjs';
+import { passwordSchema } from '~/schema/authSchema';
+import { generateUUID } from '~/utils/generateUUID';
 
 const _userRegistrationSchema = z.object({
   name: z.string().trim().min(1).max(30).refine(isNameValid),
   email: z.string().email().trim(),
+  password: passwordSchema,
 });
 
 export const _orgRegistrationSchema = z.object({
@@ -91,6 +95,30 @@ export const userRegistrationController = publicProcedure
         reason: 'userAlreadyExists',
       };
     }
+
+    /**
+     * setup the account for the user in the database
+     */
+    const hashPassword = await hash(input.password, 13);
+    const generatedUUID = generateUUID(8);
+
+    const userAccount = (
+      await db
+        .insert(account)
+        .values({
+          id: generatedUUID,
+          userId: user?.id,
+          providerId: 'credentials',
+          password: hashPassword,
+        } as any)
+        .returning()
+    ).at(0);
+
+    if (!userAccount)
+      return {
+        success: false,
+        reason: 'errorWhileCreatingUserAccount',
+      };
 
     // send mail to email with token for verification process.
     return {

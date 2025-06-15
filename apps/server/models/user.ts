@@ -35,7 +35,6 @@ export const user = pgTable('user', {
  */
 export const account = pgTable('account', {
   id: text('id').primaryKey(),
-  accountId: text('account_id').notNull(),
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),

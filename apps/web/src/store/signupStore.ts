@@ -1,20 +1,29 @@
 import { create } from 'zustand';
-import {} from 'zustand/middleware';
 
-type SignUpStore = {
-  org: null;
-  user: null;
-  updateOrg: (input: null) => void;
-  updateUser: (input: null) => void;
+type Org = {
+  name: string;
+  email?: string;
 };
 
-export const useSignUpStore = create<SignUpStore>(() => ({
-  org: null,
-  user: null,
-  updateOrg: (input) => ({
-    org: input,
-  }),
-  updateUser: (input) => ({
-    user: input,
-  }),
+type User = {
+  name?: string;
+  email?: string;
+  // Add more user fields if needed
+};
+
+type SignUpStore = {
+  org: Org;
+  user: User;
+  updateOrg: (input: Org) => void;
+  updateUser: (input: User) => void;
+};
+
+export const useSignUpStore = create<SignUpStore>((set) => ({
+  org: {
+    name: '',
+    email: '',
+  },
+  user: {},
+  updateOrg: (input) => set(() => ({ org: input })),
+  updateUser: (input) => set(() => ({ user: input })),
 }));

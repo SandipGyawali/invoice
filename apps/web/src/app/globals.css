@@ -71,8 +71,9 @@
   --display-weight: 600;
   --text-family: var(--font-sans);
   --text-weight: 400;
+  --base: oklch(0.97 0 0);
   --base-50: oklch(0.9851 0 0);
-  --base-100: oklch(0.97 0 0);
+  --base-100: #1b1b1f;
   --base-200: oklch(0.922 0 0);
   --base-300: oklch(0.87 0 0);
   --base-400: oklch(0.708 0 0);

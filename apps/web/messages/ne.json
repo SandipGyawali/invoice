@@ -1,0 +1,12 @@
+{
+    "Settings": {
+        "general": "साधारण",
+        "appearance": "रूपरंग",
+        "profile": "प्रोफाइल",
+        "settings": "सेटिङ"
+    },
+    "button": {
+        "submit": "बुझाउनुहोस्",
+        "save": "सेभ गर्नुहोस्"
+    }
+}

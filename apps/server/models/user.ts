@@ -17,6 +17,10 @@ export const user = pgTable('user', {
   emailVerified: boolean('email_verified')
     .$defaultFn(() => false)
     .notNull(),
+  banned: boolean('banned').default(false),
+  banAt: timestamp('banned_at'),
+  banReason: text('ban_reason'),
+  image: text('image'),
   tenantId: varchar('tenant_id').references(() => tenants.id),
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())

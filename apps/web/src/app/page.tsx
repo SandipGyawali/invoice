@@ -1,47 +1,17 @@
 'use client';
 import { Button } from '@invoice/ui/button';
-import { Input } from '@invoice/ui/input';
 import { Separator } from '@invoice/ui/separator';
 import { useTRPC } from '@/utils/trpc';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import React from 'react';
 import Image from 'next/image';
+import MainlineNavigation from './components/MainlineNavigation';
+import MainlineCarousel from './components/MainlineCarousel';
+import MainlinePricing from './components/MainlinePricing';
 
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
-} from '@invoice/ui/navigation-menu';
 import { Sun, Moon } from 'lucide-react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@invoice/ui/carousel';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@invoice/ui/card';
-import { Switch } from '@invoice/ui/switch';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@invoice/ui/collapsible';
 
 export default function Home() {
   const trpc = useTRPC();
@@ -58,87 +28,9 @@ export default function Home() {
   return (
     <div className="bg-primary-foreground flex flex-col gap-20 py-2 px-4">
       <div className="py-[50px] flex flex-col items-center gap-14 bg-linear-to-b from-card to-base-900 rounded-2xl">
-        <div className="flex items-center gap-10 bg-primary-foreground py-2 px-8 rounded-4xl">
-          <div className="brand-name">
-            <Link href="/">Mainline</Link>
-          </div>
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem className="font-medium">
-                <NavigationMenuTrigger>Features</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[300px] gap-4">
-                    <li>
-                      <NavigationMenuLink href="/docs" asChild>
-                        <div>
-                          <div className="font-medium">
-                            Modern Product Teams
-                          </div>
-                          <div className="font-medium text-muted-foreground">
-                            Mainline is built on the habits that make the best
-                            product teams successful.
-                          </div>
-                        </div>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link href="/docs">
-                          <div>
-                            <div className="font-medium">
-                              Resource Allocation
-                            </div>
-                            <div className="font-medium text-muted-foreground">
-                              Mainline resource allocation and execution
-                            </div>
-                          </div>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+        <MainlineNavigation />
 
-              <NavigationMenuItem className="font-medium">
-                <NavigationMenuLink href="/about-us">
-                  About Us
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem className="font-medium">
-                <NavigationMenuLink href="/pricing">Pricing</NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem className="font-medium">
-                <NavigationMenuLink href="/faq">FAQ</NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem className="font-medium">
-                <NavigationMenuLink href="/contact">Contact</NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-
-          <div className="buttons-container flex gap-1">
-            <Button variant="outline" size="sm">
-              <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              // className="bg-red-500"
-              // disabled={isPending}
-              // onClick={() => mutate()}
-              // className="border rounded-lg"
-            >
-              Login
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex text-sm gap-4">
+        <div className="flex-col lg:flex-row flex text-sm gap-4">
           <div className="flex-1 flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <div className="font-display text-[2.25rem]">
@@ -292,7 +184,7 @@ export default function Home() {
           Measure twice. Cut once.
         </div>
 
-        <div className="flex justify-between items-center gap-10">
+        <div className="flex flex-col gap-2 lg:flex lg:justify-between lg:items-center lg:gap-10">
           <div className="font-display text-[2.25rem]">
             Made for modern <br /> product teams.
           </div>
@@ -384,28 +276,28 @@ export default function Home() {
             Mainline your resource <br /> allocation and execution
           </div>
           <div className="flex flex-col gap-2 w-full">
-            <div className="grid grid-cols-2 gap-4 justify-center">
-              <div className="grid grid-rows-[50px_1fr] gap-6 p-4">
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-4 justify-center">
+              <div className="grid grid-rows-[80px_1fr] gap-6 p-4">
                 <div className="font-light text-sm">
                   <span className="font-medium">Reusable issue templates.</span>
                   Draft lightning-fast <br /> documents with our Smart
                   Instructions and Templates.
                 </div>
                 <Image
-                  className="place-self-end"
+                  className="place-self-start"
                   src="/placeholder-img.jpg"
                   width={400}
                   height={100}
                   alt="Placeholder image"
                 />
               </div>
-              <div className="grid grid-rows-[50px_1fr] gap-6 p-4">
+              <div className="grid grid-rows-[80px_1fr] gap-6 p-4">
                 <div className="font-light text-sm">
                   <span className="font-medium">Simplify your stack. </span>No
                   more Confluence, SharePoint, or Microsoft Word.
                 </div>
                 <Image
-                  className="place-self-end"
+                  className="place-self-start"
                   src="/placeholder-img.jpg"
                   width={400}
                   height={100}
@@ -413,21 +305,21 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-3">
-              <div className="grid grid-rows-[50px_1fr] p-4">
+            <div className="flex flex-col md:grid md:grid-cols-3">
+              <div className="grid grid-rows-[80px_1fr] p-4">
                 <div className="font-light text-sm">
                   <span className="font-medium">Graveyard it.</span>
                   Lorem ipsum dolor sit amet.
                 </div>
                 <Image
-                  className="place-self-end"
+                  className="place-self-start"
                   src="/placeholder-img.jpg"
                   width={450}
                   height={100}
                   alt="Placeholder image"
                 />
               </div>
-              <div className="grid grid-rows-[50px_1fr] p-4">
+              <div className="grid grid-rows-[80px_1fr] p-4">
                 <div className="font-light text-sm">
                   <span className="font-medium">Task discussions.</span>
                   Lorem ipsum dolor sit amet.
@@ -440,7 +332,7 @@ export default function Home() {
                   alt="Placeholder image"
                 />
               </div>
-              <div className="grid grid-rows-[50px_1fr] p-4">
+              <div className="grid grid-rows-[80px_1fr] p-4">
                 <div className="font-light text-sm">
                   <span className="font-medium">Notifications.</span>
                   Lorem ipsum dolor sit amet.
@@ -457,6 +349,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+
       <div className="flex flex-col items-center py-20 rounded-b-2xl bg-linear-to-b from-primary-foreground to-base-100">
         <div className="flex flex-col gap-2 items-start w-3/4">
           <div className="text-[2.5rem] font-display">
@@ -481,398 +374,12 @@ export default function Home() {
           </Button>
         </div>
 
-        <Carousel className="w-3/4 py-20">
-          <CarouselContent>
-            <CarouselItem />
-            {Array.from({ length: 5 }).map((_, index) => (
-              <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/4">
-                <Card className="h-100">
-                  <CardContent className="p-0 h-full w-full grid grid-rows-[1fr_160px]">
-                    <Image
-                      className="rounded-t-xl h-full"
-                      src="/placeholder-img.jpg"
-                      height={400}
-                      width={400}
-                      alt="Placeholder"
-                    />
-                    <div className="flex flex-col justify-between p-4">
-                      <div className="text-md font-display">
-                        I can use the tool as a substitute from my PM.
-                      </div>
-                      <div className="text-sm flex flex-col">
-                        <div className="font-bold">Kundo Marta, Founder</div>
-                        <div className="font-light">Mercury Finance</div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+        <MainlineCarousel />
 
-        <div className="pricing flex flex-col gap-16 items-center py-20">
-          <div className="flex flex-col items-center gap-2">
-            <div className="text-light text-[2.5rem]">Pricing</div>
-            <div className="font-light text-center">
-              Use Mainline for free with your whole team. Upgrade to enable
-              <br /> unlimited issues, enhanced security controls, and
-              additional features.
-            </div>
-          </div>
-          <div className="cards grid grid-cols-3 gap-4 w-3/4">
-            <Card className="border-0 bg-transparent">
-              <div className="border-1 rounded-xl border-muted-foreground">
-                <CardHeader>
-                  <CardTitle>Free</CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    $0
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-4 font-light text-muted-foreground">
-                  Free for everyone
-                  <ul>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">Unlimited</div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">2 teams</div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">500 issues</div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">
-                        Slack and Github integrations
-                      </div>
-                    </li>
-                  </ul>
-                  <div className="flex text-foreground">
-                    <Button variant="outline">Get Started</Button>
-                  </div>
-                </CardContent>
-              </div>
-            </Card>
-            <Card className="border-0 bg-transparent">
-              <div className="border-2 rounded-xl border-foreground">
-                <CardHeader>
-                  <CardTitle>Startup</CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    $6 per user/year
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-4 font-light text-muted-foreground">
-                  <div className="flex gap-2 items-center">
-                    <Switch />
-                    <div className="text-foreground">Billed anually</div>
-                  </div>
-                  <ul>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">
-                        All free plan features and...
-                      </div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">Mainline AI</div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">Unlimited teams</div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">
-                        Unlimited issues and file uploads
-                      </div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">Mainline insights</div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">Admin roles</div>
-                    </li>
-                  </ul>
-                  <div className="flex text-foreground">
-                    <Button variant="default">Get Started</Button>
-                  </div>
-                </CardContent>
-              </div>
-            </Card>
-            <Card className="border-0 bg-transparent">
-              <div className="border-1 rounded-xl border-muted-foreground">
-                <CardHeader>
-                  <CardTitle>Enterprise</CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    $6 per user/year
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-4 font-light text-muted-foreground">
-                  <div className="flex gap-2 items-center">
-                    <Switch />
-                    <div className="text-foreground">Billed anually</div>
-                  </div>
-                  <ul>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">
-                        All free plan features and...
-                      </div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">Mainline AI</div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">Supermainline AGI</div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">Free daily catered lunch</div>
-                    </li>
-                    <li className="flex gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        height="24px"
-                        viewBox="0 -960 960 960"
-                        width="24px"
-                        className="fill-muted-foreground"
-                      >
-                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                      </svg>
-                      <div className="flex-1">random HIPPA audits</div>
-                    </li>
-                  </ul>
-
-                  <div className="flex text-foreground">
-                    <Button variant="outline">Get Started</Button>
-                  </div>
-                </CardContent>
-              </div>
-            </Card>
-          </div>
-
-          <div className="questions w-3/4 grid grid-cols-2">
-            <div className="flex flex-col gap-4">
-              <div className="text-[2.5rem]">Got questions</div>
-              <div className="font-medium text-sm text-muted-foreground">
-                If you can't find what you're looking for,{' '}
-                <Link className="underline" href="/contact">
-                  get in touch.
-                </Link>
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 text-sm font-medium">
-              <div className="flex flex-col gap-4">
-                <div className="text-md text-muted-foreground">Support</div>
-                <Separator />
-                <Collapsible className="flex flex-col gap-4 items-start">
-                  <CollapsibleTrigger className="text-left underline">
-                    How can I update my account without breaking my laptop?
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    Lorem ipsum dolor sit amet consectetur <br />
-                    adipisicing elit.{' '}
-                  </CollapsibleContent>
-                </Collapsible>
-                <Collapsible className="flex flex-col gap-4 items-start">
-                  <CollapsibleTrigger className="text-left underline">
-                    Is support free, or do I need to google everything?
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    Lorem ipsum dolor sit amet consectetur <br />
-                    adipisicing elit.{' '}
-                  </CollapsibleContent>
-                </Collapsible>
-                <Collapsible className="flex flex-col gap-4 items-start">
-                  <CollapsibleTrigger className="text-left underline">
-                    Are you going to be subsumed by AI?
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    Lorem ipsum dolor sit amet consectetur <br />
-                    adipisicing elit.{' '}
-                  </CollapsibleContent>
-                </Collapsible>
-                <Separator />
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <div className="text-md text-muted-foreground">
-                  Your account
-                </div>
-                <Separator />
-                <Collapsible className="flex flex-col gap-4 items-start">
-                  <CollapsibleTrigger className="text-left underline">
-                    Is support free, or do I need to google everything?
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    Lorem ipsum dolor sit amet consectetur <br />
-                    adipisicing elit.{' '}
-                  </CollapsibleContent>
-                </Collapsible>
-                <Collapsible className="flex flex-col gap-4 items-start">
-                  <CollapsibleTrigger className="text-left underline">
-                    Are you going to be subsumed by AI?
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    Lorem ipsum dolor sit amet consectetur <br />
-                    adipisicing elit.{' '}
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <div className="text-md text-muted-foreground">
-                  Other questions
-                </div>
-                <Separator />
-                <Collapsible className="flex flex-col gap-4 items-start">
-                  <CollapsibleTrigger className="text-left underline">
-                    Is support free, or do I need to google everything?
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    Lorem ipsum dolor sit amet consectetur <br />
-                    adipisicing elit.{' '}
-                  </CollapsibleContent>
-                </Collapsible>
-                <Collapsible className="flex flex-col gap-4 items-start">
-                  <CollapsibleTrigger className="text-left underline">
-                    Are you going to be subsumed by AI?
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    Lorem ipsum dolor sit amet consectetur <br />
-                    adipisicing elit.{' '}
-                  </CollapsibleContent>
-                </Collapsible>
-              </div>
-            </div>
-          </div>
-        </div>
+        <MainlinePricing />
       </div>
 
-      <div className="flex flex-col items-center gap-8">
+      <div className="social-links flex flex-col items-center gap-8">
         <div className="flex flex-col">
           <div className="text-[2.5rem]">Start your free trial today</div>
           <div className="text-muted-foreground font-medium text-center">
@@ -932,7 +439,6 @@ export default function Home() {
             Privacy Policy
           </Link>
         </nav>
-        <nav className=""></nav>
       </div>
     </div>
   );

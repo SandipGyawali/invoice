@@ -275,3 +275,4 @@ logs
 .turbo
 
 bun.lockb
+package-lock.json

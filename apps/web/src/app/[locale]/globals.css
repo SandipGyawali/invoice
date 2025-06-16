@@ -64,13 +64,16 @@
   --font-cursive: 'Caveat', cursive;
   --background: oklch(0.9851 0 0);
   --foreground: oklch(0.269 0 0);
+  --font-weight-light: 200;
+  --font-weight-medium: 300;
 
   --display-family: var(--font-sans);
   --display-weight: 600;
   --text-family: var(--font-sans);
   --text-weight: 400;
+  --base: oklch(0.97 0 0);
   --base-50: oklch(0.9851 0 0);
-  --base-100: oklch(0.97 0 0);
+  --base-100: #1b1b1f;
   --base-200: oklch(0.922 0 0);
   --base-300: oklch(0.87 0 0);
   --base-400: oklch(0.708 0 0);
@@ -118,7 +121,7 @@
   --secondary: oklch(0.5591 0.0631 185.87);
   --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.87 0 0);
+  --muted-foreground: oklch(0.6 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.922 0 0);
   --destructive: oklch(0.704 0.191 22.216);

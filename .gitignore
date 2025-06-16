@@ -272,5 +272,6 @@ next-env.d.ts
 
 logs
 
-bun.lockb
 .turbo
+
+bun.lockb

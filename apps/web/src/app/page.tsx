@@ -184,7 +184,7 @@ export default function Home() {
           Measure twice. Cut once.
         </div>
 
-        <div className="flex flex-col gap-2 lg:flex lg:justify-between lg:items-center lg:gap-10">
+        <div className="w-3/4 flex flex-col gap-4">
           <div className="font-display text-[2.25rem]">
             Made for modern <br /> product teams.
           </div>
@@ -197,22 +197,30 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 bg-card w-3/4">
-          <div className="card flex flex-col flex-1">
+        <div className="grid lg:grid-cols-3 max-lg:grid-rows-3 bg-primary-foreground border-1 rounded-4xl w-3/4 border-1">
+          <AspectRatio
+            className="relative flex flex-col justify-end"
+            ratio={3 / 4}
+          >
             <Image
-              className="rounded-lg flex-1 pt-4 pl-4 object-cover"
-              width={500}
-              height={500}
+              className="rounded-4xl absolute inset-0 h-full w-full object-cover p-4"
               src="/placeholder-img.jpg"
-              alt="placeholder"
-            />
-            <div className="flex p-4 gap-2">
-              <div className="flex-1">
-                Purpose-built for product development
+              alt="placeholder image"
+              height={400}
+              width={300}
+            ></Image>
+            <div className="absolute inset-0 h-full w-full bg-linear-to-t from-primary-foreground via-primary-foreground via-30% to-transparent rounded-4xl"></div>
+
+            <Link
+              className="group flex justify-between gap-2 p-6 z-10"
+              href="#"
+            >
+              <div className="text-2xl max-lg:text-4xl flex-1">
+                Purpose built for product development
               </div>
-              <div className="rounded-full border-1 border-foreground w-12 h-12 relative">
+              <div className="border-1 border-muted-foreground rounded-full p-2 w-10 h-10">
                 <svg
-                  className="fill-foreground absolute translate-1/2 hover:translate-x-3/4 transition duration-300"
+                  className="fill-foreground transition-transform duration-100 group-hover:translate-x-1"
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
                   viewBox="0 -960 960 960"
@@ -221,21 +229,31 @@ export default function Home() {
                   <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z" />
                 </svg>
               </div>
-            </div>
-          </div>
-          <div className="card flex flex-col flex-1">
+            </Link>
+          </AspectRatio>
+          <AspectRatio
+            className="relative flex flex-col justify-end"
+            ratio={3 / 4}
+          >
             <Image
-              className="rounded-lg flex-1 pt-4 pl-4 object-cover"
-              width={500}
-              height={500}
+              className="rounded-4xl absolute inset-0 h-full w-full object-cover p-4"
               src="/placeholder-img.jpg"
-              alt="placeholder"
-            />
-            <div className="flex p-4 gap-2">
-              <div className="flex-1">Manage projects end-to-end</div>
-              <div className="rounded-full border-1 border-foreground w-12 h-12 relative">
+              alt="placeholder image"
+              height={400}
+              width={300}
+            ></Image>
+            <div className="absolute inset-0 h-full w-full bg-linear-to-t from-primary-foreground via-primary-foreground via-30% to-transparent rounded-4xl"></div>
+
+            <Link
+              className="group flex justify-between gap-2 p-6 z-10"
+              href="#"
+            >
+              <div className="text-2xl max-lg:text-4xl flex-1">
+                Manage projects end-to-end.
+              </div>
+              <div className="border-1 border-muted-foreground rounded-full p-2 w-10 h-10">
                 <svg
-                  className="fill-foreground absolute translate-1/2 hover:translate-x-3/4 transition duration-300"
+                  className="fill-foreground transition-transform duration-100 group-hover:translate-x-1"
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
                   viewBox="0 -960 960 960"
@@ -244,21 +262,31 @@ export default function Home() {
                   <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z" />
                 </svg>
               </div>
-            </div>
-          </div>
-          <div className="card flex flex-col flex-1">
+            </Link>
+          </AspectRatio>
+          <AspectRatio
+            className="relative flex flex-col justify-end"
+            ratio={3 / 4}
+          >
             <Image
-              className="rounded-lg flex-1 pt-4 pl-4 object-cover"
-              width={500}
-              height={500}
+              className="rounded-4xl absolute inset-0 h-full w-full object-cover p-4"
               src="/placeholder-img.jpg"
-              alt="placeholder"
-            />
-            <div className="flex p-4 gap-2">
-              <div className="flex-1">Build momentum and healthy habits</div>
-              <div className="rounded-full border-1 border-foreground w-12 h-12 relative">
+              alt="placeholder image"
+              height={400}
+              width={300}
+            ></Image>
+            <div className="absolute inset-0 h-full w-full bg-linear-to-t from-primary-foreground via-primary-foreground via-30% to-transparent rounded-4xl"></div>
+
+            <Link
+              className="group flex justify-between gap-2 p-6 z-10"
+              href="#"
+            >
+              <div className="text-2xl max-lg:text-4xl flex-1">
+                Build momentum and healthy habits.
+              </div>
+              <div className="border-1 border-muted-foreground rounded-full p-2 w-10 h-10">
                 <svg
-                  className="fill-foreground absolute translate-1/2 hover:translate-x-3/4 transition duration-300"
+                  className="fill-foreground transition-transform duration-100 group-hover:translate-x-1"
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
                   viewBox="0 -960 960 960"
@@ -267,8 +295,8 @@ export default function Home() {
                   <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z" />
                 </svg>
               </div>
-            </div>
-          </div>
+            </Link>
+          </AspectRatio>
         </div>
 
         <div className="flex flex-col gap-4 items-center w-3/4">

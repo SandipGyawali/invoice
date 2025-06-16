@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isNameValid } from '../utils/validName.ts';
 
 export const passwordSchema = z
   .string({
@@ -57,3 +58,11 @@ export const authSchema = {
     otp: z.string(),
   }),
 };
+
+export const ZRegistrationSchema = z.object({
+  userName: z.string().trim().min(1).max(30).refine(isNameValid),
+  userEmail: z.string().email().trim(),
+  password: passwordSchema,
+  orgName: z.string().trim().min(1).max(30).refine(isNameValid),
+  orgEmail: z.string().trim().email().optional(),
+});

@@ -31,10 +31,9 @@ function SignUpStep3Form({ className, props }: Props) {
   const form = useForm();
   const [counter, setCounter] = useState(5);
 
-  const { mutate, isPending } = useMutation(
+  const { mutate, isPending, isSuccess } = useMutation(
     trpc.auth.requestTenantUserRegistration.mutationOptions()
   );
-  const isSuccess = true;
 
   const submit = () => {
     const validateStep1Data = step1Schema.safeParse(org);
@@ -56,9 +55,15 @@ function SignUpStep3Form({ className, props }: Props) {
       password: user.password,
     };
 
+    console.log(modifyData);
+
     mutate(modifyData, {
-      onSuccess: (data) => {},
-      onError: (err) => {},
+      onSuccess: (data) => {
+        console.log(data);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
     });
   };
 

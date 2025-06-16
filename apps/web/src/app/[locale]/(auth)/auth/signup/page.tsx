@@ -25,7 +25,8 @@ function SignUpPage() {
         {currentStep > 1 && (
           <Button
             variant="outline"
-            className="absolute -top-15"
+            size="sm"
+            className="absolute -top-13"
             onClick={() => setCurrentStep((prev) => prev - 1)}
           >
             <ArrowLeft />
@@ -48,24 +49,19 @@ function SignUpPage() {
         </Stepper>
         <div className="flex w-full max-w-lg mx-auto justify-center">
           {currentStep === 1 && (
+            <SignUpStep2Form
+              currentStep={currentStep}
+              setCurrentStep={setCurrentStep}
+            />
+          )}
+          {currentStep === 2 && (
             <SignUpStep1Form
               currentStep={currentStep}
               setCurrentStep={setCurrentStep}
               className=""
             />
           )}
-          {currentStep === 2 && (
-            <SignUpStep2Form
-              currentStep={currentStep}
-              setCurrentStep={setCurrentStep}
-            />
-          )}
-          {currentStep === 3 && (
-            <SignUpStep3Form
-              currentStep={currentStep}
-              setCurrentStep={setCurrentStep}
-            />
-          )}
+          {currentStep === 3 && <SignUpStep3Form />}
         </div>
       </div>
 

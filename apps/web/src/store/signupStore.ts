@@ -6,8 +6,9 @@ type Org = {
 };
 
 type User = {
-  name?: string;
+  name: string;
   email?: string;
+  password: string;
   // Add more user fields if needed
 };
 

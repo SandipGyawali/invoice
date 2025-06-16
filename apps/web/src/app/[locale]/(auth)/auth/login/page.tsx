@@ -1,3 +1,4 @@
+'use client';
 import LoginForm from '@/modules/auth/login/login.form';
 
 function Page() {

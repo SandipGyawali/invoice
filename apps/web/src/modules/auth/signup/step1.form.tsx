@@ -26,8 +26,8 @@ type _Schema = z.infer<typeof _schema>;
 interface Props {
   currentStep: number;
   setCurrentStep: Dispatch<SetStateAction<number>>;
-  className: string;
-  props: any;
+  className?: string;
+  props?: any;
 }
 
 function SignUpStep1Form({ setCurrentStep, className, props }: Props) {
@@ -41,7 +41,7 @@ function SignUpStep1Form({ setCurrentStep, className, props }: Props) {
 
   const submit = (input: _Schema) => {
     updateOrg(input);
-    setCurrentStep(2);
+    setCurrentStep(3);
   };
 
   return (
@@ -91,11 +91,11 @@ function SignUpStep1Form({ setCurrentStep, className, props }: Props) {
                     autoFocus
                     placeholder="Enter Email"
                     className={`
-                          ${
-                            fieldState.error &&
-                            'border-red-500 focus:ring-red-500'
-                          }
-                        `}
+                        ${
+                          fieldState.error &&
+                          'border-red-500 focus:ring-red-500'
+                        }
+                      `}
                     {...field}
                   />
                 </FormControl>

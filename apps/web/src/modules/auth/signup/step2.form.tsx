@@ -95,11 +95,8 @@ function SignUpStep2Form({ setCurrentStep, className, props }: Props) {
                     autoFocus
                     placeholder="Enter Email"
                     className={`
-                          ${
-                            fieldState.error &&
-                            'border-red-500 focus:ring-red-500'
-                          }
-                        `}
+                      ${fieldState.error && 'border-red-500 focus:ring-red-500'}
+                    `}
                     {...field}
                   />
                 </FormControl>

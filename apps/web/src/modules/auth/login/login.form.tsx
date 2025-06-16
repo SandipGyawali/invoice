@@ -88,11 +88,8 @@ function LoginForm({ className, props }: Props) {
                     autoFocus
                     placeholder="Enter Email"
                     className={`
-                          ${
-                            fieldState.error &&
-                            'border-red-500 focus:ring-red-500'
-                          }
-                        `}
+                      ${fieldState.error && 'border-red-500 focus:ring-red-500'}
+                    `}
                     {...field}
                   />
                 </FormControl>
@@ -109,7 +106,11 @@ function LoginForm({ className, props }: Props) {
                 <FormLabel className="text-start">Password</FormLabel>
                 <div className="relative">
                   <Input
-                    className="pe-9"
+                    // className="pe-9"
+                    className={`
+                      ${fieldState.error && 'border-red-500 focus:ring-red-500'}
+                    `}
+                    {...field}
                     placeholder="Enter Password"
                     type={isVisible ? 'text' : 'password'}
                   />

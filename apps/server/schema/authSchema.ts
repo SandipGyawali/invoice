@@ -66,3 +66,6 @@ export const ZRegistrationSchema = z.object({
   orgName: z.string().trim().min(1).max(30).refine(isNameValid),
   orgEmail: z.string().trim().email().optional(),
 });
+
+export type TZRegistrationSchema = z.infer<typeof ZRegistrationSchema>;
+export type TZLoginSchema = z.infer<typeof authSchema.login>;

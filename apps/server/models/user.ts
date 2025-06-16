@@ -49,5 +49,5 @@ export const account = pgTable('account', {
   createdAt: timestamp('created_at')
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
-  updatedAt: timestamp('updated_at').notNull(),
+  updatedAt: timestamp('updated_at').$onUpdateFn(() => new Date()),
 });

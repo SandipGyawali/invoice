@@ -1,5 +1,6 @@
 'use client';
 import { Link } from '@/i18n/navigation';
+import { useTRPC } from '@/utils/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@invoice/ui/button';
 import {
@@ -12,14 +13,15 @@ import {
 } from '@invoice/ui/form';
 import { Input } from '@invoice/ui/input';
 import { cn } from '@invoice/ui/lib/utils';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { EyeIcon, EyeOffIcon, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 export const _schema = z.object({
-  name: z.string().trim().min(3).max(50),
-  email: z.string().trim().email().optional(),
+  email: z.string().trim().email(),
   password: z.string().min(8).max(12),
 });
 
@@ -31,13 +33,30 @@ interface Props {
 }
 
 function LoginForm({ className, props }: Props) {
+  const trpc = useTRPC();
+  const router = useRouter();
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const form = useForm<_Schema>({
     resolver: zodResolver(_schema),
     defaultValues: {},
   });
+  const { mutate, isPending } = useMutation(
+    trpc.auth.loginUser.mutationOptions()
+  );
 
-  const submit = (input: _Schema) => {};
+  const submit = (input: _Schema) => {
+    const modifyData = {
+      email: input.email,
+      password: input.password,
+    };
+
+    mutate(modifyData, {
+      onSuccess: (data) => {
+        router.replace('/dashboard');
+      },
+      onError: (err) => {},
+    });
+  };
 
   const toggleVisibility = () => setIsVisible((prevState) => !prevState);
 
@@ -55,28 +74,6 @@ function LoginForm({ className, props }: Props) {
           </p>
         </div>
         <div className="grid gap-8 mt-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <FormLabel className="text-start">Name</FormLabel>
-                <FormControl>
-                  <Input
-                    autoFocus
-                    placeholder="Enter Name"
-                    className={`
-                      ${
-                        fieldState.error && 'border-red-500 focus:ring-red-500'
-                      }`}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-red-500 text-sm text-start" />
-              </FormItem>
-            )}
-          />
-
           <FormField
             control={form.control}
             name="email"
@@ -106,7 +103,6 @@ function LoginForm({ className, props }: Props) {
                 <FormLabel className="text-start">Password</FormLabel>
                 <div className="relative">
                   <Input
-                    // className="pe-9"
                     className={`
                       ${fieldState.error && 'border-red-500 focus:ring-red-500'}
                     `}
@@ -133,8 +129,15 @@ function LoginForm({ className, props }: Props) {
             )}
           />
 
-          <Button type="submit" className="w-full">
-            Login
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <>
+                <Loader2 className="animate-spin" />
+                {'Submitting...'}
+              </>
+            ) : (
+              'Login'
+            )}
           </Button>
         </div>
 

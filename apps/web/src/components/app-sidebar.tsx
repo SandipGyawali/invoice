@@ -21,6 +21,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@invoice/ui/sidebar';
+import { NavPermission } from './nav-permission';
+import { UserLock } from 'lucide-react';
 
 const data = {
   user: {
@@ -31,8 +33,15 @@ const data = {
   navMain: [
     {
       title: 'Dashboard',
-      url: '#',
+      url: '/dashboard',
       icon: IconDashboard,
+    },
+  ],
+  navPermission: [
+    {
+      title: 'Roles',
+      url: '/roles',
+      icon: UserLock,
     },
   ],
   navClouds: [
@@ -86,7 +95,7 @@ const data = {
   navSecondary: [
     {
       title: 'Settings',
-      url: '#',
+      url: '/settings',
       icon: IconSettings,
     },
     {
@@ -117,6 +126,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
+        <NavPermission items={data.navPermission} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

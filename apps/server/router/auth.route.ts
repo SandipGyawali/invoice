@@ -1,5 +1,5 @@
 import { publicProcedure, trpc } from '../lib/trpc.ts';
-import { ZRegistrationSchema } from '../schema/authSchema.ts';
+import { authSchema, ZRegistrationSchema } from '../schema/authSchema.ts';
 
 export const authRouter = trpc.router({
   requestTenantUserRegistration: publicProcedure
@@ -10,6 +10,18 @@ export const authRouter = trpc.router({
       );
 
       return tenantUserRegistrationHandler({
+        ctx,
+        input,
+      });
+    }),
+  loginUser: publicProcedure
+    .input(authSchema.login)
+    .mutation(async ({ input, ctx }) => {
+      const { loginUserHandler } = await import(
+        '../handlers/auth/login.handler.ts'
+      );
+
+      return loginUserHandler({
         ctx,
         input,
       });

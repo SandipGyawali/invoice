@@ -1,34 +1,34 @@
 'use client';
-import * as React from 'react';
 import { type Icon } from '@tabler/icons-react';
 import {
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@invoice/ui/sidebar';
 import { Link } from '@/i18n/navigation';
 
-export function NavSecondary({
+export function NavPermission({
   items,
-  ...props
 }: {
   items: {
     title: string;
     url: string;
-    icon: Icon;
+    icon?: Icon;
   }[];
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+}) {
   return (
-    <SidebarGroup {...props}>
-      <SidebarGroupContent>
+    <SidebarGroup>
+      <SidebarGroupContent className="flex flex-col">
+        <SidebarGroupLabel>Roles & Permission</SidebarGroupLabel>
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton asChild tooltip={item.title}>
                 <Link href={item.url}>
-                  <item.icon />
+                  {item.icon && <item.icon />}
                   <span>{item.title}</span>
                 </Link>
               </SidebarMenuButton>

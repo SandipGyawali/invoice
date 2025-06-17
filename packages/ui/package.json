@@ -43,6 +43,7 @@
         "@radix-ui/react-tabs": "^1.1.12",
         "@radix-ui/react-tooltip": "^1.2.7",
         "@tabler/icons-react": "^3.34.0",
+        "@tanstack/match-sorter-utils": "^8.19.4",
         "cmdk": "^1.1.1",
         "react": "^19.0.0",
         "react-day-picker": "^9.7.0",

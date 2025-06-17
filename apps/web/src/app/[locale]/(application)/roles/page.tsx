@@ -22,8 +22,10 @@ import {
 import { cn } from '@invoice/ui/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { EllipsisIcon, PlusIcon } from 'lucide-react';
+import { EllipsisIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import AddRoleForm from '@/modules/roles/addRole.form';
+import UpdateRoleForm from '@/modules/roles/updateRole.form';
 
 type IRoles = {
   id: number;
@@ -33,6 +35,7 @@ type IRoles = {
 };
 
 function Page() {
+  const [openEditSheet, setOpenEditSheet] = useState(false);
   const trpc = useTRPC();
   const [data, setData] = useState<IRoles | null>(null);
   const { data: roles, isSuccess } = useQuery(
@@ -66,7 +69,7 @@ function Page() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOpenEditSheet(true)}>
               <span>Edit</span>
               <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
             </DropdownMenuItem>
@@ -121,7 +124,7 @@ function Page() {
         cell: ({ row }) => (
           <div className="font-medium">{row.getValue('name')}</div>
         ),
-        size: 180,
+        size: 150,
         enableHiding: false,
       },
 
@@ -160,14 +163,17 @@ function Page() {
         <DataTable
           columns={columns}
           data={data ?? []}
-          actions={
-            <Button className="ml-auto" size="sm" variant="default">
-              <PlusIcon size={16} aria-hidden="true" />
-              Add user
-            </Button>
-          }
+          actions={<AddRoleForm />}
         />
       </PageContent>
+
+      {/* edit form sheet */}
+      {openEditSheet && (
+        <UpdateRoleForm
+          openEditSheet={openEditSheet}
+          setOpenEditSheet={setOpenEditSheet}
+        />
+      )}
     </PageContainer>
   );
 }

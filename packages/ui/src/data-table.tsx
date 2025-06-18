@@ -1,5 +1,5 @@
 'use client';
-import React, { useId, useRef, useState } from 'react';
+import React, { useId, useMemo, useRef, useState } from 'react';
 import {
   ColumnDef,
   FilterFn,
@@ -70,6 +70,7 @@ import {
   TableRow,
 } from './table';
 import { rankItem } from '@tanstack/match-sorter-utils';
+import { Checkbox } from './checkbox';
 
 type Item = {
   id: string;
@@ -159,45 +160,43 @@ export default function DataTable<TData, TValue>({
   });
 
   // Get unique status values
-  // const uniqueStatusValues = useMemo(() => {
-  //   const statusColumn = table.getColumn('status');
+  const uniqueStatusValues = useMemo(() => {
+    const statusColumn = table.getColumn('status');
+    if (!statusColumn) return [];
+    const values = Array.from(statusColumn.getFacetedUniqueValues().keys());
 
-  //   if (!statusColumn) return [];
+    return values.sort();
+  }, [table.getColumn('status')?.getFacetedUniqueValues()]);
 
-  //   const values = Array.from(statusColumn.getFacetedUniqueValues().keys());
+  // Get counts for each status
+  const statusCounts = useMemo(() => {
+    const statusColumn = table.getColumn('status');
+    if (!statusColumn) return new Map();
+    return statusColumn.getFacetedUniqueValues();
+  }, [table.getColumn('status')?.getFacetedUniqueValues()]);
 
-  //   return values.sort();
-  // }, [table.getColumn('status')?.getFacetedUniqueValues()]);
+  const selectedStatuses = useMemo(() => {
+    const filterValue = table.getColumn('status')?.getFilterValue() as string[];
+    return filterValue ?? [];
+  }, [table.getColumn('status')?.getFilterValue()]);
 
-  // // Get counts for each status
-  // const statusCounts = useMemo(() => {
-  //   const statusColumn = table.getColumn('status');
-  //   if (!statusColumn) return new Map();
-  //   return statusColumn.getFacetedUniqueValues();
-  // }, [table.getColumn('status')?.getFacetedUniqueValues()]);
+  const handleStatusChange = (checked: boolean, value: string) => {
+    const filterValue = table.getColumn('status')?.getFilterValue() as string[];
+    const newFilterValue = filterValue ? [...filterValue] : [];
 
-  // const selectedStatuses = useMemo(() => {
-  //   const filterValue = table.getColumn('status')?.getFilterValue() as string[];
-  //   return filterValue ?? [];
-  // }, [table.getColumn('status')?.getFilterValue()]);
+    if (checked) {
+      newFilterValue.push(value);
+    } else {
+      const index = newFilterValue.indexOf(value);
+      if (index > -1) {
+        newFilterValue.splice(index, 1);
+      }
+    }
 
-  // const handleStatusChange = (checked: boolean, value: string) => {
-  //   const filterValue = table.getColumn('status')?.getFilterValue() as string[];
-  //   const newFilterValue = filterValue ? [...filterValue] : [];
-
-  //   if (checked) {
-  //     newFilterValue.push(value);
-  //   } else {
-  //     const index = newFilterValue.indexOf(value);
-  //     if (index > -1) {
-  //       newFilterValue.splice(index, 1);
-  //     }
-  //   }
-
-  //   table
-  //     .getColumn('status')
-  //     ?.setFilterValue(newFilterValue.length ? newFilterValue : undefined);
-  // };
+    table
+      .getColumn('status')
+      ?.setFilterValue(newFilterValue.length ? newFilterValue : undefined);
+  };
 
   return (
     <div className="space-y-4">
@@ -251,11 +250,11 @@ export default function DataTable<TData, TValue>({
                   aria-hidden="true"
                 />
                 Status
-                {/* {selectedStatuses.length > 0 && (
+                {selectedStatuses.length > 0 && (
                   <span className="bg-background text-muted-foreground/70 -me-1 inline-flex h-5 max-h-full items-center rounded border px-1 font-[inherit] text-[0.625rem] font-medium">
                     {selectedStatuses.length}
                   </span>
-                )} */}
+                )}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto min-w-36 p-3" align="start">
@@ -264,7 +263,7 @@ export default function DataTable<TData, TValue>({
                   Filters
                 </div>
                 <div className="space-y-3">
-                  {/* {uniqueStatusValues.map((value, i) => (
+                  {uniqueStatusValues.map((value, i) => (
                     <div key={value} className="flex items-center gap-2">
                       <Checkbox
                         id={`${id}-${i}`}
@@ -277,13 +276,13 @@ export default function DataTable<TData, TValue>({
                         htmlFor={`${id}-${i}`}
                         className="flex grow justify-between gap-2 font-normal"
                       >
-                        {value}{' '}
-                        <span className="text-muted-foreground ms-2 text-xs">
+                        {value == 1 ? 'Active' : 'Inactive'}{' '}
+                        <span className="text-muAted-foreground ms-2 text-xs">
                           {statusCounts.get(value)}
                         </span>
                       </Label>
                     </div>
-                  ))} */}
+                  ))}
                 </div>
               </div>
             </PopoverContent>

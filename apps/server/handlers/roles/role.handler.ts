@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { db } from '../../db/db.ts';
 import { roles } from '../../models/rbac.ts';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import type {
   TZRoleInsertSchema,
   TZRoleSchema,
@@ -78,10 +78,10 @@ type EditTenantRoleOptions = {
   input: any;
 };
 
-export const updateTenantRoleHandler = async ({ input, ctx }) => {
+export const updateTenantRoleHandler = async ({ input, ctx }: any) => {
   // find the role
   const existingRole = (
-    await db.select().from(roles).where(eq(roles.name, input.name))
+    await db.select().from(roles).where(eq(roles.id, input.id))
   ).at(0);
 
   if (!existingRole) {
@@ -91,9 +91,12 @@ export const updateTenantRoleHandler = async ({ input, ctx }) => {
     });
   }
 
-  await db.update(roles).set({
-    name: input.name,
-  });
+  await db
+    .update(roles)
+    .set({
+      name: input.name,
+    })
+    .where(and(eq(roles.id, input.id), eq(roles.tenantId, input.tenantId)));
 
   return {
     message: 'Role Updated Successfully',

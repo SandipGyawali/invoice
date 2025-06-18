@@ -23,9 +23,10 @@ import { cn } from '@invoice/ui/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import { EllipsisIcon } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import AddRoleForm from '@/modules/roles/addRole.form';
 import UpdateRoleForm from '@/modules/roles/updateRole.form';
+import { useRouter } from '@/i18n/navigation';
 
 type IRoles = {
   id: number;
@@ -35,22 +36,20 @@ type IRoles = {
 };
 
 function Page() {
-  const [openEditSheet, setOpenEditSheet] = useState(false);
   const trpc = useTRPC();
-  const [data, setData] = useState<IRoles | null>(null);
-  const { data: roles, isSuccess } = useQuery(
+  const router = useRouter();
+  const [openEditSheet, setOpenEditSheet] = useState(false);
+  const [defaultData, setDefaultData] = useState({});
+  const { data: roles } = useQuery(
     trpc.roles.tenantRoles.queryOptions({
       tenantId: 'e1065a8c',
     })
   );
 
-  console.log(roles);
-
-  useEffect(() => {
-    if (isSuccess) {
-      setData(roles);
-    }
-  }, [isSuccess]);
+  const handleEditClick = (data: IRoles) => {
+    setDefaultData(data);
+    setOpenEditSheet(true);
+  };
 
   function RowActions({ row }: { row: Row<IRoles> }) {
     return (
@@ -69,14 +68,16 @@ function Page() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => setOpenEditSheet(true)}>
+            <DropdownMenuItem onClick={() => handleEditClick(row.original)}>
               <span>Edit</span>
               <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => router.push(`/roles/${row.original.id}`)}
+            >
               <span>Permissions</span>
               <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
@@ -138,7 +139,7 @@ function Page() {
                 'bg-destructive text-primary-foreground'
             )}
           >
-            {row.getValue('status') ?? 'Active'}
+            {row.getValue('status') == 1 ? 'Active' : 'Inactive'}
           </Badge>
         ),
         size: 100,
@@ -162,7 +163,7 @@ function Page() {
       <PageContent>
         <DataTable
           columns={columns}
-          data={data ?? []}
+          data={roles ?? []}
           actions={<AddRoleForm />}
         />
       </PageContent>
@@ -172,6 +173,7 @@ function Page() {
         <UpdateRoleForm
           openEditSheet={openEditSheet}
           setOpenEditSheet={setOpenEditSheet}
+          defaultData={defaultData}
         />
       )}
     </PageContainer>

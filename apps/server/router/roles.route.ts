@@ -24,4 +24,16 @@ export const roleRouter = trpc.router({
         input,
       });
     }),
+  updateTenantRole: publicProcedure
+    .input(ZRoleInsertSchema)
+    .mutation(async ({ input, ctx }) => {
+      const { updateTenantRoleHandler } = await import(
+        '../handlers/roles/role.handler.ts'
+      );
+
+      return updateTenantRoleHandler({
+        ctx,
+        input,
+      });
+    }),
 });

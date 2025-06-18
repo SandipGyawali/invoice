@@ -26,26 +26,28 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const _schema = z.object({
-  name: z.string().trim().min(3).max(8),
+  name: z.string().trim().min(3).max(20),
 });
 
 function UpdateRoleForm({
   setOpenEditSheet,
   openEditSheet,
+  defaultData,
 }: {
   setOpenEditSheet: Dispatch<SetStateAction<boolean>>;
   openEditSheet: boolean;
+  defaultData: any;
 }) {
   const trpc = useTRPC();
   const form = useForm({
     resolver: zodResolver(_schema),
     defaultValues: {
-      name: '',
+      ...defaultData,
     },
   });
 
-  const { mutate: addRole, isPending } = useMutation(
-    trpc.roles.createTenantRole.mutationOptions()
+  const { mutate: updateRole, isPending } = useMutation(
+    trpc.roles.updateTenantRole.mutationOptions()
   );
 
   const handleFormReset = () => {
@@ -55,10 +57,11 @@ function UpdateRoleForm({
   const submit = (input: z.infer<typeof _schema>) => {
     const modifyData = {
       ...input,
-      tenantId: 'e1065a8c',
+      tenantId: defaultData.tenantId,
+      id: defaultData.id,
     };
 
-    addRole(modifyData, {
+    updateRole(modifyData, {
       onSuccess: (data) => {
         handleFormReset();
         setOpenEditSheet(false);

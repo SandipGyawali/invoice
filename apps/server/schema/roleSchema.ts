@@ -5,6 +5,7 @@ export const ZRoleSchema = z.object({
 });
 
 export const ZRoleInsertSchema = z.object({
+  id: z.number().nonnegative(),
   tenantId: z.string().trim().nonempty(),
   name: z
     .string()

@@ -64,6 +64,34 @@
       "when": 1750076981590,
       "tag": "0008_next_brood",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1750219152658,
+      "tag": "0009_hot_forge",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1750256449560,
+      "tag": "0010_sweet_scorpion",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1750258909998,
+      "tag": "0011_furry_hydra",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1750258973767,
+      "tag": "0012_majestic_speed",
+      "breakpoints": true
     }
   ]
 }

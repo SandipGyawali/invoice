@@ -9,6 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { tenants } from './tenant.ts';
 import { user } from './user.ts';
+import { statusEnum } from './status.enum.ts';
 
 /**
  * Role Based Access control models
@@ -20,6 +21,8 @@ export const roles = pgTable('roles', {
   }),
   name: text('name').notNull(),
   createdAt: timestamp('created_at').$default(() => new Date()),
+  status: statusEnum('status').default('1'),
+  statusFTR: varchar('status_ftr', { length: 50 }).default(''),
 });
 
 /**
@@ -27,8 +30,11 @@ export const roles = pgTable('roles', {
  */
 export const permissions = pgTable('permissions', {
   id: serial().primaryKey(),
-  name: text('name'),
-  createdAt: timestamp('created_at').$default(() => new Date()),
+  slug: text('slug'),
+  description: text(''),
+  createdAt: timestamp('created_at').defaultNow(),
+  status: statusEnum('status').default('1'),
+  statusFTR: varchar('status_ftr', { length: 50 }).default(''),
 });
 
 /**

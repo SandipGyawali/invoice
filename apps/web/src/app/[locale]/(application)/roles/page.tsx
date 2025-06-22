@@ -27,6 +27,8 @@ import { useMemo, useState } from 'react';
 import AddRoleForm from '@/modules/roles/addRole.form';
 import UpdateRoleForm from '@/modules/roles/updateRole.form';
 import { useRouter } from '@/i18n/navigation';
+import { useRolePermission } from '@/contexts/rolePermissionContext';
+import { ApplicationModules } from '@/enums/routeModule.enum';
 
 type IRoles = {
   id: number;
@@ -38,12 +40,24 @@ type IRoles = {
 function Page() {
   const trpc = useTRPC();
   const router = useRouter();
+  const { permission } = useRolePermission();
   const [openEditSheet, setOpenEditSheet] = useState(false);
   const [defaultData, setDefaultData] = useState({});
   const { data: roles } = useQuery(
     trpc.roles.tenantRoles.queryOptions({
       tenantId: 'e1065a8c',
     })
+  );
+
+  const availablePermissions = permission.get(ApplicationModules.user);
+
+  if (!availablePermissions) {
+    return <>Oops you don't have permission to access this </>;
+  }
+  console.log(availablePermissions);
+
+  console.log(
+    availablePermissions.some((perm) => perm.slug.includes('create'))
   );
 
   const handleEditClick = (data: IRoles) => {
@@ -164,7 +178,11 @@ function Page() {
         <DataTable
           columns={columns}
           data={roles ?? []}
-          actions={<AddRoleForm />}
+          actions={
+            availablePermissions.some((prem) =>
+              prem.slug.includes('create')
+            ) && <AddRoleForm />
+          }
         />
       </PageContent>
 

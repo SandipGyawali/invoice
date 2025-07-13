@@ -19,11 +19,12 @@ import {
   SidebarMenuItem,
 } from '@invoice/ui/sidebar';
 import {
+  ChartBarStacked,
   FileText,
   Package,
   ReceiptText,
+  Ruler,
   UserLock,
-  UserRound,
   Users2,
 } from 'lucide-react';
 
@@ -51,13 +52,9 @@ const data = {
       url: '/quotations',
       icon: FileText,
     },
+
     {
-      title: 'Products',
-      url: '/products',
-      icon: Package,
-    },
-    {
-      title: 'Products',
+      title: 'Reports',
       url: '/reports',
       icon: ReceiptText,
     },
@@ -72,6 +69,23 @@ const data = {
       title: 'Clients',
       url: '/clients',
       icon: Users2,
+    },
+  ],
+  product: [
+    {
+      title: 'Products',
+      url: '/products',
+      icon: Package,
+    },
+    {
+      title: 'Categories',
+      url: '/products/categories',
+      icon: ChartBarStacked,
+    },
+    {
+      title: 'Units',
+      url: '/products/units',
+      icon: Ruler,
     },
   ],
   navSecondary: [
@@ -112,6 +126,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             ['Main']: data.navMain,
             ['Modules']: data.modules,
             ['Roles & Permission']: data.navPermission,
+            ["Product, Category & It's Unit"]: data.product,
           }}
         />
         <NavSecondary items={data.navSecondary} className="mt-auto" />

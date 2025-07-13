@@ -69,7 +69,7 @@ function Page() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="flex justify-end">
+          <div className="flex justify-start">
             <Button
               size="icon"
               variant="ghost"

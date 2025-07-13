@@ -1,0 +1,1 @@
+ALTER TABLE "product_category" RENAME COLUMN "product_name" TO "cat_name";

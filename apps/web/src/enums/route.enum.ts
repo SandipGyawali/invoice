@@ -5,6 +5,9 @@ export interface ROUTES_INTERFACE {
     add: string;
     update: string;
   };
+  addClient: string;
+  clients: string;
+  addProduct: string;
 }
 
 const ADMIN = '/admin'; // admin modules
@@ -17,4 +20,7 @@ export const ROUTES: ROUTES_INTERFACE = {
     add: `${TENANTS}/new`,
     update: `${TENANTS}/update`,
   },
+  addClient: '/clients/add',
+  clients: '/clients',
+  addProduct: '/products/add',
 };

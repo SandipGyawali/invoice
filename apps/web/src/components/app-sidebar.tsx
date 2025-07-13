@@ -1,10 +1,7 @@
 'use client';
 import * as React from 'react';
 import {
-  IconCamera,
   IconDashboard,
-  IconFileAi,
-  IconFileDescription,
   IconHelp,
   IconInnerShadowTop,
   IconSettings,
@@ -21,8 +18,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@invoice/ui/sidebar';
-import { NavPermission } from './nav-permission';
-import { UserLock } from 'lucide-react';
+import {
+  ChartBarStacked,
+  FileText,
+  Package,
+  ReceiptText,
+  Ruler,
+  UserLock,
+  Users2,
+} from 'lucide-react';
 
 const data = {
   user: {
@@ -37,59 +41,51 @@ const data = {
       icon: IconDashboard,
     },
   ],
+  modules: [
+    {
+      title: 'Invoices',
+      url: '/invoices',
+      icon: FileText,
+    },
+    {
+      title: 'Quotation',
+      url: '/quotations',
+      icon: FileText,
+    },
+
+    {
+      title: 'Reports',
+      url: '/reports',
+      icon: ReceiptText,
+    },
+  ],
   navPermission: [
     {
       title: 'Roles',
       url: '/roles',
       icon: UserLock,
     },
+    {
+      title: 'Clients',
+      url: '/clients',
+      icon: Users2,
+    },
   ],
-  navClouds: [
+  product: [
     {
-      title: 'Capture',
-      icon: IconCamera,
-      isActive: true,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
+      title: 'Products',
+      url: '/products',
+      icon: Package,
     },
     {
-      title: 'Proposal',
-      icon: IconFileDescription,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
+      title: 'Categories',
+      url: '/products/categories',
+      icon: ChartBarStacked,
     },
     {
-      title: 'Prompts',
-      icon: IconFileAi,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
+      title: 'Units',
+      url: '/products/units',
+      icon: Ruler,
     },
   ],
   navSecondary: [
@@ -125,8 +121,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavPermission items={data.navPermission} />
+        <NavMain
+          items={{
+            ['Main']: data.navMain,
+            ['Modules']: data.modules,
+            ['Roles & Permission']: data.navPermission,
+            ["Product, Category & It's Unit"]: data.product,
+          }}
+        />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

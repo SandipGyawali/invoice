@@ -1,4 +1,5 @@
 'use client';
+
 import { type Icon } from '@tabler/icons-react';
 import {
   SidebarGroup,
@@ -10,32 +11,42 @@ import {
 } from '@invoice/ui/sidebar';
 import { Link } from '@/i18n/navigation';
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: Icon;
-  }[];
-}) {
+interface Item {
+  title: string;
+  url: string;
+  icon?: Icon;
+}
+
+interface Items {
+  [key: string]: Item[];
+}
+
+interface NavMainProps {
+  items: Items;
+}
+
+export function NavMain({ items }: NavMainProps) {
   return (
-    <SidebarGroup>
-      <SidebarGroupContent className="flex flex-col">
-        <SidebarGroupLabel>Home</SidebarGroupLabel>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild tooltip={item.title}>
-                <Link href={item.url}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <>
+      {Object.entries(items).map(([sectionName, sectionItems], idx) => (
+        <SidebarGroup key={`${sectionName}-${idx}`}>
+          <SidebarGroupContent className="flex flex-col">
+            <SidebarGroupLabel>{sectionName}</SidebarGroupLabel>
+            <SidebarMenu>
+              {sectionItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild tooltip={item.title}>
+                    <Link href={item.url}>
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      ))}
+    </>
   );
 }

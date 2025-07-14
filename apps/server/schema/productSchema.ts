@@ -28,3 +28,17 @@ export const ZUpdateProductCategorySchema = z.object({
 export type TZUpdateProductCategoryInterface = z.infer<
   typeof ZUpdateProductCategorySchema
 >;
+
+export const ZProductSchema = z.object({
+  pName: z.string(),
+  sku: z.number(),
+  pCatId: z.number(),
+  pPrice: z.number(),
+  pUnit: z.number(),
+  sPrice: z.number(),
+  pDescription: z.string().nullable().default(''),
+  providerName: z.string().nullable().default(''),
+  tenantId: z.string(),
+});
+
+export type TZProductInterface = z.infer<typeof ZProductSchema>;

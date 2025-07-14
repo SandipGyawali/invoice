@@ -38,25 +38,60 @@ import {
 import { Textarea } from '@invoice/ui/textarea';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useTRPC } from '@/utils/trpc';
 
 function AddProductForm() {
+  const trpc = useTRPC();
   const router = useRouter();
   const form = useForm<ZProductSchemaInterface>({
     resolver: zodResolver(zProductSchema),
     defaultValues: {
-      category: '',
-      sku: '',
+      category: 0,
+      sku: 1,
       productName: '',
       description: '',
       price: 0,
-      unit: '',
       taxRate: 0,
       provider: '',
       purchasePrice: 0,
     },
   });
 
+  const { data: productUnitList } = useQuery(
+    trpc.productUnit.listUnit.queryOptions()
+  );
+  const { data: productCategoryList } = useQuery(
+    trpc.productCategory.listCategory.queryOptions()
+  );
+  const { mutate: addProduct } = useMutation(
+    trpc.product.addProduct.mutationOptions()
+  );
+
   const onSubmit = (values: ZProductSchemaInterface) => {
+    const modifyData = {
+      pName: values.productName,
+      pCatId: values.category,
+      pPrice: values.purchasePrice,
+      pUnit: values.unit,
+      sPrice: values.price,
+      pDescription: values.description,
+      providerName: values.provider,
+      sku: values.sku,
+      tenantId: 'e1065a8c',
+    };
+
+    addProduct(modifyData, {
+      onSuccess: (data) => {
+        console.log(data);
+        // handleFormReset();
+        // setSheetOpen(false);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    });
+
     console.log('Product submitted:', values);
     // Add your API call here
   };
@@ -91,20 +126,22 @@ function AddProductForm() {
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            defaultValue={field.value?.toString()}
                           >
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select Category" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="electronics">
-                                Electronics
-                              </SelectItem>
-                              <SelectItem value="clothing">Clothing</SelectItem>
-                              <SelectItem value="home">
-                                Home & Kitchen
-                              </SelectItem>
-                              <SelectItem value="books">Books</SelectItem>
+                              {productCategoryList?.map((cat) => {
+                                return (
+                                  <SelectItem
+                                    key={`cat-${cat.catName}`}
+                                    value={cat.id?.toString()}
+                                  >
+                                    {cat.catName}
+                                  </SelectItem>
+                                );
+                              })}
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -119,9 +156,14 @@ function AddProductForm() {
                     name="sku"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>SKU</FormLabel>
+                        <FormLabel>SKU (Stock Keeping Unit)</FormLabel>
                         <FormControl>
-                          <Input placeholder="Eg: SKU12345" {...field} />
+                          <Input
+                            type="number"
+                            min={0}
+                            placeholder="Enter Sock"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -143,7 +185,6 @@ function AddProductForm() {
                     )}
                   />
 
-                  {/* Product Unit */}
                   <FormField
                     control={form.control}
                     name="unit"
@@ -151,22 +192,24 @@ function AddProductForm() {
                       <FormItem>
                         <FormLabel>Unit</FormLabel>
                         <FormControl>
-                          <Input placeholder="Eg: piece, box, kg" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Price */}
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Selling Price</FormLabel>
-                        <FormControl>
-                          <Input type="number" step="0.01" min={0} {...field} />
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value?.toString()}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select Unit" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {productUnitList?.map((unit) => (
+                                <SelectItem
+                                  key={`unit-${unit.name}`}
+                                  value={unit.id?.toString()}
+                                >
+                                  {unit.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -182,6 +225,21 @@ function AddProductForm() {
                         <FormLabel>Purchase Price</FormLabel>
                         <FormControl>
                           <Input type="number" min={0} step="0.01" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Price */}
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Selling Price</FormLabel>
+                        <FormControl>
+                          <Input type="number" step="0.01" min={0} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

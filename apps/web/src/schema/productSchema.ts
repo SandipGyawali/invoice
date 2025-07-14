@@ -1,15 +1,22 @@
 import { z } from 'zod';
 
-export const zProductSchema = z.object({
-  category: z.string().min(1, 'Category is required'),
-  sku: z.string().min(1, 'SKU is required'),
-  productName: z.string().min(1, 'Product name is required'),
-  description: z.string().min(1, 'Description is required'),
-  price: z.coerce.number().positive('Price must be positive'),
-  unit: z.string().min(1, 'Unit is required'),
-  taxRate: z.coerce.number().nonnegative(),
-  provider: z.string().min(1, 'Provider name is required'),
-  purchasePrice: z.coerce.number().positive('Purchase price must be positive'),
-});
+export const zProductSchema = z
+  .object({
+    category: z.coerce.number(),
+    sku: z.coerce.number(),
+    productName: z.string().min(1, 'Product name is required'),
+    description: z.string().optional().default(''),
+    price: z.coerce.number().positive('Price must be positive'),
+    unit: z.coerce.number(),
+    taxRate: z.coerce.number().nonnegative(),
+    provider: z.string().optional().default(''),
+    purchasePrice: z.coerce
+      .number()
+      .positive('Purchase price must be positive'),
+  })
+  .refine((data) => data.purchasePrice > data.price, {
+    message: 'Selling Price must be greater then Purchase price',
+    path: ['price'],
+  });
 
 export type ZProductSchemaInterface = z.infer<typeof zProductSchema>;

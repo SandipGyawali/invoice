@@ -50,6 +50,7 @@ export const products = pgTable('products', {
     .references(() => productCategory.id)
     .notNull(),
   pName: text('p_name').notNull(),
+  sku: integer('sku').notNull().default(0),
   pUnit: integer('p_unit')
     .references(() => productUnit.id)
     .notNull(),
@@ -57,6 +58,8 @@ export const products = pgTable('products', {
   sPrice: decimal('s_price').notNull(),
   pDescription: text('p_description').default(''),
   providerName: text('provider_name').default(''),
+  status: statusEnum('status').default('1'),
+  statusFTR: varchar('status_ftr', { length: 50 }).default(''),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').$onUpdateFn(() => new Date()),
 });

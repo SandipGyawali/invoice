@@ -42,8 +42,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@invoice/ui/select';
+import { useTRPC } from '@/utils/trpc';
+import { useMutation } from '@tanstack/react-query';
 
 function AddClientForm() {
+  const trpc = useTRPC();
   const [currentStep, setCurrentStep] = useState(1);
 
   const form = useForm<ZClientSchemaInterface>({
@@ -58,7 +61,6 @@ function AddClientForm() {
       zip: '',
       country: '',
       phone: '',
-      mobile: '',
       email: '',
       gender: 'Male',
       dob: '',
@@ -66,6 +68,10 @@ function AddClientForm() {
       taxId: '',
     },
   });
+
+  const { mutate: addClient } = useMutation(
+    trpc.client.addClient.mutationOptions()
+  );
 
   const steps = [
     {
@@ -102,6 +108,23 @@ function AddClientForm() {
 
   const onSubmit = (values: ZClientSchemaInterface) => {
     console.log('Submit:', values);
+
+    const modifyData = {
+      ...values,
+      tenantId: 'e1065a8c',
+    };
+
+    addClient(modifyData, {
+      onSuccess: (data) => {
+        console.log(data);
+        // handleFormReset();
+        // setSheetOpen(false);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    });
+
     // handle API or continue next step
     nextStep();
   };
@@ -249,7 +272,7 @@ function AddClientForm() {
 
                         <FormField
                           control={form.control}
-                          name="mobile"
+                          name="phone"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Mobile Number</FormLabel>

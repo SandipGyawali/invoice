@@ -17,6 +17,7 @@ export const zClientSchema = z.object({
   }),
   vatId: z.string().optional(),
   taxId: z.string().optional(),
+  tenantId: z.string(),
 });
 
 export type ZClientSchemaInterface = z.infer<typeof zClientSchema>;

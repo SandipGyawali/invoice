@@ -1,5 +1,6 @@
 import { trpc } from '../lib/trpc.ts';
 import { authRouter } from '../router/auth.route.ts';
+import { clientRouter } from './client/client.route.ts';
 import { permissionRouter } from './permission.route.ts';
 import { productRouter } from './product/product.route.ts';
 import { productCategoryRouter } from './product/productCategory.route.ts';
@@ -20,6 +21,7 @@ export const appRouter = trpc.router({
   productCategory: productCategoryRouter,
   tax: taxRouter,
   product: productRouter,
+  client: clientRouter,
 });
 
 export type AppRouter = typeof appRouter;

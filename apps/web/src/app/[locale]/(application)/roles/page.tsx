@@ -142,7 +142,6 @@ function Page() {
         size: 150,
         enableHiding: false,
       },
-
       {
         header: 'Status',
         accessorKey: 'status',

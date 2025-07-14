@@ -19,8 +19,11 @@ import {
   SidebarMenuItem,
 } from '@invoice/ui/sidebar';
 import {
+  BadgePercent,
   ChartBarStacked,
   FileText,
+  FolderOpenDot,
+  Icon,
   Package,
   ReceiptText,
   Ruler,
@@ -88,6 +91,20 @@ const data = {
       icon: Ruler,
     },
   ],
+  tax: [
+    {
+      title: 'Taxes',
+      url: '/tax',
+      icon: BadgePercent,
+    },
+  ],
+  projects: [
+    {
+      title: 'Projects',
+      url: '/projects',
+      icon: FolderOpenDot,
+    },
+  ],
   navSecondary: [
     {
       title: 'Settings',
@@ -127,6 +144,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             ['Modules']: data.modules,
             ['Roles & Permission']: data.navPermission,
             ["Product, Category & It's Unit"]: data.product,
+            ['Invoice Tax']: data.tax,
+            ['Tasks & Project']: data.projects,
           }}
         />
         <NavSecondary items={data.navSecondary} className="mt-auto" />

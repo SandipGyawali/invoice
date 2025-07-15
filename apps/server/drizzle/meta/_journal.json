@@ -141,6 +141,27 @@
       "when": 1752484777830,
       "tag": "0019_gorgeous_gateway",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1752569652288,
+      "tag": "0020_striped_hex",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1752569863880,
+      "tag": "0021_lyrical_wallop",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1752576478668,
+      "tag": "0022_damp_veda",
+      "breakpoints": true
     }
   ]
 }

@@ -7,3 +7,4 @@ export * from './status.enum.ts';
 export * from './product.ts';
 export * from './tax.ts';
 export * from './client.ts';
+export * from './projectNtask.ts';

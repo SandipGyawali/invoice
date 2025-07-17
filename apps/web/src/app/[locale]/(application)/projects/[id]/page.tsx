@@ -1,7 +1,9 @@
 'use client';
+import { useTRPC } from '@/utils/trpc';
 import { Badge } from '@invoice/ui/badge';
 import { Button } from '@invoice/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@invoice/ui/card';
+import { useQuery } from '@tanstack/react-query';
 import {
   BarChart3,
   Calendar,
@@ -13,19 +15,33 @@ import {
   MoreHorizontal,
   CircleOffIcon,
 } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 interface Task {
-  id: string;
+  id: number;
   title: string;
+  projectId: number;
   description: string;
   priority: 'low' | 'medium' | 'high';
-  assignee: string;
-  dueDate: string;
-  status: 'not-started' | 'in-progress' | 'done';
+  createdAt: string;
+  endDate: string;
+  tStatus: 'not_started' | 'in_progress' | 'completed';
 }
 
-const initialTasks: Task[] = [
+// {
+//   "id": 1,
+//   "projectId": 1,
+//   "title": "Design Database Schema",
+//   "description": "Create the tables and relationships for invoices, clients, and payments.",
+//   "endDate": "2025-07-17T04:56:25.779Z",
+//   "priority": "low",
+//   "tStatus": "completed",
+//   "createdAt": "2025-07-15T04:56:25.779Z",
+//   "updatedAt": "2025-07-15T04:56:25.779Z"
+// }
+
+const initialTasks = [
   {
     id: '1',
     title: 'Design System Setup',
@@ -107,30 +123,47 @@ const priorityColors = {
 };
 
 const statusIcons = {
-  'not-started': Circle,
-  'in-progress': PlayCircle,
-  done: CheckCircle2,
+  not_started: Circle,
+  in_progress: PlayCircle,
+  completed: CheckCircle2,
 };
 
 const statusColors = {
-  'not-started': 'text-gray-500',
-  'in-progress': 'text-blue-500',
-  done: 'text-green-500',
+  not_started: 'text-gray-500',
+  in_progress: 'text-blue-500',
+  completed: 'text-green-500',
 };
 
-export default function Component() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+export default function Page() {
+  const trpc = useTRPC();
+  const params = useParams();
+  const [tasks, setTasks] = useState(initialTasks);
 
-  const getTasksByStatus = (status: Task['status']) => {
-    return tasks.filter((task) => task.status === status);
+  const { data: projectList } = useQuery(
+    trpc.project.listProjects.queryOptions({
+      id: Number(params.id),
+      tenantId: 'e1065a8c',
+    })
+  );
+  const { data: taskList } = useQuery(
+    trpc.tasks.getByProjectId.queryOptions({
+      projectId: Number(params.id ?? ''),
+    })
+  );
+
+  console.log(projectList);
+  console.log(taskList);
+
+  const getTasksByStatus = (status: Task['tStatus']) => {
+    return taskList?.filter((task) => task.tStatus === status);
   };
 
-  const notStartedTasks = getTasksByStatus('not-started');
-  const inProgressTasks = getTasksByStatus('in-progress');
-  const doneTasks = getTasksByStatus('done');
+  const notStartedTasks = getTasksByStatus('not_started');
+  const inProgressTasks = getTasksByStatus('in_progress');
+  const doneTasks = getTasksByStatus('completed');
 
   const TaskCard = ({ task }: { task: Task }) => {
-    const StatusIcon = statusIcons[task.status];
+    const StatusIcon = statusIcons[task.tStatus];
 
     return (
       <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer">
@@ -154,17 +187,17 @@ export default function Component() {
             </Badge>
             <div className="flex items-center text-xs text-muted-foreground">
               <Calendar className="h-3 w-3 mr-1" />
-              {task.dueDate}
+              {task.endDate}
             </div>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <span className="text-xs text-muted-foreground">
-                {task.assignee}
+                {/* {task.t} */}
               </span>
             </div>
-            <StatusIcon className={`h-4 w-4 ${statusColors[task.status]}`} />
+            <StatusIcon className={`h-4 w-4 ${statusColors[task.tStatus]}`} />
           </div>
         </CardContent>
       </Card>
@@ -213,11 +246,13 @@ export default function Component() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-gray-600">
-                  {notStartedTasks.length}
+                  {notStartedTasks?.length}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {((notStartedTasks.length / tasks.length) * 100).toFixed(0)}%
-                  of total
+                  {(
+                    (notStartedTasks?.length ?? 0 / tasks.length) * 100
+                  ).toFixed(0)}
+                  % of total
                 </p>
               </CardContent>
             </Card>
@@ -231,11 +266,13 @@ export default function Component() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-600">
-                  {inProgressTasks.length}
+                  {inProgressTasks?.length}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {((inProgressTasks.length / tasks.length) * 100).toFixed(0)}%
-                  of total
+                  {(
+                    (inProgressTasks?.length ?? 0 / tasks.length) * 100
+                  ).toFixed(0)}
+                  % of total
                 </p>
               </CardContent>
             </Card>
@@ -247,11 +284,11 @@ export default function Component() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {doneTasks.length}
+                  {doneTasks?.length}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {((doneTasks.length / tasks.length) * 100).toFixed(0)}% of
-                  total
+                  {((doneTasks?.length ?? 0 / tasks.length) * 100).toFixed(0)}%
+                  of total
                 </p>
               </CardContent>
             </Card>
@@ -267,7 +304,7 @@ export default function Component() {
                 <CircleOffIcon className="h-4.5 w-4.5 mr-2" />
                 <h2 className="font-semibold">Not Started</h2>
                 <Badge variant="default" className="ml-2">
-                  {notStartedTasks.length}
+                  {notStartedTasks?.length}
                 </Badge>
               </div>
               <Button variant="ghost" size="icon">
@@ -275,7 +312,7 @@ export default function Component() {
               </Button>
             </div>
             <div className="space-y-3">
-              {notStartedTasks.map((task) => (
+              {notStartedTasks?.map((task) => (
                 <TaskCard key={task.id} task={task} />
               ))}
             </div>
@@ -288,7 +325,7 @@ export default function Component() {
                 <PlayCircle className="h-5 w-5 text-blue-500 mr-2" />
                 <h2 className="font-semibold">In Progress</h2>
                 <Badge variant="default" className="ml-2">
-                  {inProgressTasks.length}
+                  {inProgressTasks?.length}
                 </Badge>
               </div>
               <Button variant="ghost" size="icon">
@@ -296,7 +333,7 @@ export default function Component() {
               </Button>
             </div>
             <div className="space-y-3">
-              {inProgressTasks.map((task) => (
+              {inProgressTasks?.map((task) => (
                 <TaskCard key={task.id} task={task} />
               ))}
             </div>
@@ -309,7 +346,7 @@ export default function Component() {
                 <CheckCircle2 className="h-5 w-5 text-green-500f mr-2" />
                 <h2 className="font-semibold">Done</h2>
                 <Badge variant="default" className="ml-2">
-                  {doneTasks.length}
+                  {doneTasks?.length}
                 </Badge>
               </div>
               <Button variant="ghost" size="icon">
@@ -317,8 +354,8 @@ export default function Component() {
               </Button>
             </div>
             <div className="space-y-3">
-              {doneTasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
+              {taskList?.map((task, index) => (
+                <TaskCard key={`${task.title}-${index}`} task={task} />
               ))}
             </div>
           </div>

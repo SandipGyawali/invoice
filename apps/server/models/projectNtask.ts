@@ -9,6 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { statusEnum } from './status.enum.ts';
 import { tenants } from './tenant.ts';
+import { client } from './client.ts';
 
 export const projectStatusEnum = pgEnum('project_status', [
   'in_progress',
@@ -24,6 +25,9 @@ export const projects = pgTable('projects', {
     onDelete: 'cascade',
   }),
   name: varchar('name', { length: 255 }).notNull(),
+  clientId: integer('client_id').references(() => client.id, {
+    onDelete: 'cascade',
+  }),
   description: text('description'),
   startDate: timestamp('start_date').notNull(),
   endDate: timestamp('end_date'),

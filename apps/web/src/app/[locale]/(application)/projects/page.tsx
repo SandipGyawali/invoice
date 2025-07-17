@@ -6,7 +6,6 @@ import {
   PageTitle,
 } from '@/components/page-layout';
 import { ProjectStatusBadge, StatusBadge } from '@/components/status-badge';
-import { ROUTES } from '@/enums/route.enum';
 import { formatDate } from '@/utils/formatDate';
 import { useTRPC } from '@/utils/trpc';
 import { Button } from '@invoice/ui/button';
@@ -29,7 +28,7 @@ function Page() {
   const router = useRouter();
 
   const { data: projectList } = useQuery(
-    trpc.project.listProjects.queryOptions()
+    trpc.project.listProjects.queryOptions({})
   );
 
   const handleEditClick = (data) => {
@@ -123,7 +122,7 @@ function Page() {
           columns={columns}
           data={projectList ?? []}
           actions={
-            <Button onClick={() => router.push(ROUTES.addProduct)}>
+            <Button onClick={() => router.push('/projects/add')}>
               <PlusIcon />
               Add
             </Button>

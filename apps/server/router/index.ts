@@ -6,6 +6,7 @@ import { productRouter } from './product/product.route.ts';
 import { productCategoryRouter } from './product/productCategory.route.ts';
 import { productUnitRouter } from './product/productUnit.route.ts';
 import { projectRouter } from './project/project.route.ts';
+import { taskRouter } from './project/task.route.ts';
 import { roleRouter } from './roles.route.ts';
 import { taxRouter } from './tax/tax.route.ts';
 import { tenantRouter } from './tenant/index.ts';
@@ -24,6 +25,7 @@ export const appRouter = trpc.router({
   product: productRouter,
   client: clientRouter,
   project: projectRouter,
+  tasks: taskRouter,
 });
 
 export type AppRouter = typeof appRouter;

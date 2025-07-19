@@ -1,4 +1,5 @@
 'use client';
+import Loader from '@/components/Loader';
 import { useTRPC } from '@/utils/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -88,11 +89,7 @@ function RolePermissionContextProvider({
   }
 
   if (isLoading && !isSuccess) {
-    return (
-      <div className="flex w-screen h-screen mx-auto items-center justify-between">
-        <SyncLoader className="mx-auto" color="#b7e854" />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (

@@ -1,8 +1,11 @@
 'use client';
+import Loader from '@/components/Loader';
+import { formatDate } from '@/utils/formatDate';
 import { useTRPC } from '@/utils/trpc';
 import { Badge } from '@invoice/ui/badge';
 import { Button } from '@invoice/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@invoice/ui/card';
+import { cn } from '@invoice/ui/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart3,
@@ -12,109 +15,40 @@ import {
   Circle,
   PlayCircle,
   Plus,
-  MoreHorizontal,
   CircleOffIcon,
+  FileX,
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { AddTask } from '@/modules/project/AddTask';
+import { UpdateTask } from '@/modules/project/UpdateTask';
 
 interface Task {
   id: number;
-  title: string;
   projectId: number;
-  description: string;
-  priority: 'low' | 'medium' | 'high';
-  createdAt: string;
-  endDate: string;
-  tStatus: 'not_started' | 'in_progress' | 'completed';
+  title: string;
+  description: string | null;
+  endDate: Date | null;
+  priority: 'high' | 'medium' | 'low' | null;
+  tStatus: 'in_progress' | 'completed' | 'not_started' | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 }
 
-// {
-//   "id": 1,
-//   "projectId": 1,
-//   "title": "Design Database Schema",
-//   "description": "Create the tables and relationships for invoices, clients, and payments.",
-//   "endDate": "2025-07-17T04:56:25.779Z",
-//   "priority": "low",
-//   "tStatus": "completed",
-//   "createdAt": "2025-07-15T04:56:25.779Z",
-//   "updatedAt": "2025-07-15T04:56:25.779Z"
-// }
-
-const initialTasks = [
-  {
-    id: '1',
-    title: 'Design System Setup',
-    description: 'Create a comprehensive design system for the project',
-    priority: 'high',
-    assignee: 'John Doe',
-    dueDate: '2024-01-15',
-    status: 'not-started',
-  },
-  {
-    id: '2',
-    title: 'User Authentication',
-    description: 'Implement login and registration functionality',
-    priority: 'high',
-    assignee: 'Jane Smith',
-    dueDate: '2024-01-20',
-    status: 'not-started',
-  },
-  {
-    id: '3',
-    title: 'Dashboard Layout',
-    description: 'Create responsive dashboard layout',
-    priority: 'medium',
-    assignee: 'Mike Johnson',
-    dueDate: '2024-01-18',
-    status: 'not-started',
-  },
-  {
-    id: '4',
-    title: 'API Integration',
-    description: 'Connect frontend with backend APIs',
-    priority: 'high',
-    assignee: 'Sarah Wilson',
-    dueDate: '2024-01-25',
-    status: 'in-progress',
-  },
-  {
-    id: '5',
-    title: 'Database Schema',
-    description: 'Design and implement database structure',
-    priority: 'medium',
-    assignee: 'Tom Brown',
-    dueDate: '2024-01-22',
-    status: 'in-progress',
-  },
-  {
-    id: '6',
-    title: 'Testing Framework',
-    description: 'Set up unit and integration testing',
-    priority: 'medium',
-    assignee: 'Lisa Davis',
-    dueDate: '2024-01-30',
-    status: 'in-progress',
-  },
-  {
-    id: '7',
-    title: 'Project Setup',
-    description: 'Initialize project structure and dependencies',
-    priority: 'high',
-    assignee: 'John Doe',
-    dueDate: '2024-01-10',
-    status: 'done',
-  },
-  {
-    id: '8',
-    title: 'Requirements Analysis',
-    description: 'Gather and document project requirements',
-    priority: 'medium',
-    assignee: 'Jane Smith',
-    dueDate: '2024-01-12',
-    status: 'done',
-  },
-];
+interface ProjectInterface {
+  id: number;
+  tenantId: string | null;
+  name: string;
+  clientId: number | null;
+  description: string | null;
+  startDate: Date;
+  endDate: Date | null;
+  pStatus: 'in_progress' | 'completed' | 'not_started' | null;
+  status: '0' | null;
+  statusFTR: string | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+}
 
 const priorityColors = {
   low: 'bg-green-100 text-green-800 border-green-200',
@@ -134,28 +68,62 @@ const statusColors = {
   completed: 'text-green-500',
 };
 
+export function EmptyKanbanColumn() {
+  return (
+    <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer">
+      <CardContent className="p-4 flex flex-col items-center gap-5">
+        <FileX className="w-8 h-8" />
+        <p className="text-sm font-medium">No tasks found </p>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function Page() {
   const trpc = useTRPC();
   const params = useParams();
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [project, setProject] = useState<ProjectInterface | null>(null);
+  const [openAddTask, setOpenAddTask] = useState<boolean>(false);
 
-  const { data: projectList } = useQuery(
+  const {
+    data: projectList,
+    isSuccess: projectFetchSuccess,
+    isLoading: projectIsLoading,
+  } = useQuery(
     trpc.project.listProjects.queryOptions({
       id: Number(params.id),
       tenantId: 'e1065a8c',
     })
   );
-  const { data: taskList } = useQuery(
+  const {
+    data: taskList,
+    isSuccess,
+    isLoading: taskIsLoading,
+    refetch: refetchTasks,
+  } = useQuery(
     trpc.tasks.getByProjectId.queryOptions({
       projectId: Number(params.id ?? ''),
     })
   );
 
-  console.log(projectList);
-  console.log(taskList);
+  useEffect(() => {
+    if (isSuccess) {
+      setTasks(taskList);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuccess, setTasks]);
 
-  const getTasksByStatus = (status: Task['tStatus']) => {
-    return taskList?.filter((task) => task.tStatus === status);
+  useEffect(() => {
+    setProject(projectList?.[0] as any);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectFetchSuccess, setProject]);
+
+  if (projectIsLoading && taskIsLoading)
+    return <Loader className="w-full h-full" />;
+
+  const getTasksByStatus = (status: Task['tStatus']): Array<Task> => {
+    return taskList?.filter((task) => task.tStatus === status) ?? [];
   };
 
   const notStartedTasks = getTasksByStatus('not_started');
@@ -170,9 +138,7 @@ export default function Page() {
         <CardContent className="p-4">
           <div className="flex items-start justify-between mb-2">
             <h3 className="font-medium text-sm">{task.title}</h3>
-            <Button variant="ghost" size="icon" className="h-6 w-6">
-              <MoreHorizontal className="h-3 w-3" />
-            </Button>
+            <UpdateTask refetch={() => refetchTasks()} taskData={task} />
           </div>
           <p className="text-xs text-muted-foreground mb-3">
             {task.description}
@@ -181,23 +147,22 @@ export default function Page() {
           <div className="flex items-center justify-between mb-3">
             <Badge
               variant="outline"
-              className={`text-xs ${priorityColors[task.priority]}`}
+              className={cn(
+                `text-xs`,
+                task?.priority && priorityColors[task.priority]
+              )}
             >
               {task.priority}
             </Badge>
             <div className="flex items-center text-xs text-muted-foreground">
               <Calendar className="h-3 w-3 mr-1" />
-              {task.endDate}
+              {task?.endDate && formatDate(task?.endDate?.toString())}
             </div>
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <span className="text-xs text-muted-foreground">
-                {/* {task.t} */}
-              </span>
-            </div>
-            <StatusIcon className={`h-4 w-4 ${statusColors[task.tStatus]}`} />
+            <div className="flex items-center" />
+            <StatusIcon className={cn(`h-4 w-4`, statusColors[task.tStatus])} />
           </div>
         </CardContent>
       </Card>
@@ -209,15 +174,17 @@ export default function Page() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+          <div className="w-full flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold">Project Kanban</h1>
-              <p className="text-sm mt-1">Track your project progress</p>
+              <h1 className="text-3xl font-bold">{project?.name}</h1>
+              <p className="text-sm mt-1">{project?.description}</p>
             </div>
-            <Button>
-              <Plus />
-              Add Task
-            </Button>
+            <AddTask
+              onOpenState={() => setOpenAddTask((prev) => !prev)}
+              state={openAddTask}
+              projectData={project}
+              refetch={refetchTasks}
+            />
           </div>
 
           {/* Analytics Cards */}
@@ -312,9 +279,13 @@ export default function Page() {
               </Button>
             </div>
             <div className="space-y-3">
-              {notStartedTasks?.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
+              {notStartedTasks && notStartedTasks.length == 0 ? (
+                <EmptyKanbanColumn />
+              ) : (
+                notStartedTasks?.map((task) => (
+                  <TaskCard key={task.id} task={task} />
+                ))
+              )}
             </div>
           </div>
 
@@ -333,9 +304,13 @@ export default function Page() {
               </Button>
             </div>
             <div className="space-y-3">
-              {inProgressTasks?.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
+              {inProgressTasks && inProgressTasks.length == 0 ? (
+                <EmptyKanbanColumn />
+              ) : (
+                inProgressTasks?.map((task) => (
+                  <TaskCard key={task.id} task={task} />
+                ))
+              )}
             </div>
           </div>
 
@@ -354,9 +329,13 @@ export default function Page() {
               </Button>
             </div>
             <div className="space-y-3">
-              {taskList?.map((task, index) => (
-                <TaskCard key={`${task.title}-${index}`} task={task} />
-              ))}
+              {doneTasks && doneTasks.length == 0 ? (
+                <EmptyKanbanColumn />
+              ) : (
+                doneTasks?.map((task, index) => (
+                  <TaskCard key={`${task.title}-${index}`} task={task} />
+                ))
+              )}
             </div>
           </div>
         </div>

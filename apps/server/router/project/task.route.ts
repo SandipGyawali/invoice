@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure, trpc } from '../../lib/trpc.ts';
+import { zTaskSchema } from '../../schema/project.schema.ts';
 
 export const taskRouter = trpc.router({
   getByProjectId: publicProcedure
@@ -8,14 +9,16 @@ export const taskRouter = trpc.router({
         projectId: z.number(),
       })
     )
-    .query(async ({ input, ctx }) => {
+    .query(async (opts) => {
       const { getTaskByProjectIdHandler } = await import(
         '../../handlers/project/task.handler.ts'
       );
-
-      return getTaskByProjectIdHandler({
-        ctx,
-        input,
-      });
+      return getTaskByProjectIdHandler(opts);
     }),
+  addTask: publicProcedure.input(zTaskSchema).mutation(async (opts) => {
+    const { addTaskHandler } = await import(
+      '../../handlers/project/task.handler.ts'
+    );
+    return addTaskHandler(opts);
+  }),
 });

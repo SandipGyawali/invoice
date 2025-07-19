@@ -29,3 +29,29 @@ export const zProjectSchema = z
   });
 
 export type TZProjectSchemaType = z.infer<typeof zProjectSchema>;
+
+export const priorityEnum = z.enum(['low', 'medium', 'high']);
+export const projectStatusEnum = z.enum([
+  'not_started',
+  'in_progress',
+  'completed',
+]); // adapt as needed
+
+export const zTaskSchema = z.object({
+  projectId: z.number().int(),
+  title: z.string().max(255),
+  description: z.string().nullable().optional(),
+  endDate: z.coerce.date().nullable().optional(),
+  priority: priorityEnum.default('low'),
+  tStatus: projectStatusEnum.default('not_started'),
+  createdAt: z.date().optional(), // usually auto-generated
+  updatedAt: z.date().optional(), // updated via trigger/function
+});
+
+export type TZTaskSchemaType = z.infer<typeof zTaskSchema>;
+
+export const zTaskUpdateSchema = zTaskSchema.extend({
+  id: z.number(),
+});
+
+export type TZTaskUpdateSchemaType = z.infer<typeof zTaskUpdateSchema>;

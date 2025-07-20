@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure, trpc } from '../../lib/trpc.ts';
-import { zTaskSchema } from '../../schema/project.schema.ts';
+import { zTaskSchema, zTaskUpdateSchema } from '../../schema/project.schema.ts';
 
 export const taskRouter = trpc.router({
   getByProjectId: publicProcedure
@@ -21,4 +21,13 @@ export const taskRouter = trpc.router({
     );
     return addTaskHandler(opts);
   }),
+  updateTask: publicProcedure
+    .input(zTaskUpdateSchema)
+    .mutation(async (opts) => {
+      const { updateTaskHandler } = await import(
+        '../../handlers/project/task.handler.ts'
+      );
+      return updateTaskHandler(opts);
+    }),
 });
+1;

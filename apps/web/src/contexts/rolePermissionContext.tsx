@@ -4,7 +4,6 @@ import { useTRPC } from '@/utils/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useMemo } from 'react';
-import { SyncLoader } from 'react-spinners';
 
 interface Permission {
   id: number;
@@ -28,9 +27,8 @@ interface RolePermissionContextType {
   //   hasPermission: (slug: string) => boolean;
 }
 
-const RolePermissionContext = createContext<RolePermissionContextType | null>(
-  null
-);
+export const RolePermissionContext =
+  createContext<RolePermissionContextType | null>(null);
 
 // custom hook to use the context
 export function useRolePermission() {

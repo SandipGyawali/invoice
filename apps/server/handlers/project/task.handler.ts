@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '../../db/db.ts';
 import { projects, tasks } from '../../models/projectNtask.ts';
 import { TRPCError } from '@trpc/server';
+import type { TZTaskUpdateSchemaType } from '../../schema/project.schema.ts';
 
 interface TaskHandler {
   ctx: {};
@@ -15,9 +16,8 @@ interface AddTaskInterface extends TaskHandler {
   input: any;
 }
 
-
 interface UpdateTaskInterface extends TaskHandler {
-  input: any
+  input: TZTaskUpdateSchemaType;
 }
 
 export const getTaskByProjectIdHandler = async ({ input }: TaskHandlerById) => {
@@ -75,6 +75,35 @@ export const addTaskHandler = async ({ input }: AddTaskInterface) => {
   };
 };
 
-\\
+export const updateTaskHandler = async ({ input }: UpdateTaskInterface) => {
+  // check if task exists
+  const taskExists = (
+    await db.select().from(tasks).where(eq(tasks.id, input.id))
+  ).at(0);
 
-export const updateTaskHandler = async ({input}: )
+  if (!taskExists) {
+    throw new TRPCError({
+      message: "Task Handler doesn't exits with the provided name",
+      code: 'BAD_REQUEST',
+    });
+  }
+
+  const [updateTask] = await db
+    .update(tasks)
+    .set({
+      title: input.title,
+      description: input.description,
+      priority: input.priority,
+      endDate: input.endDate,
+      tStatus: input.tStatus,
+      projectId: input.projectId,
+    })
+    .where(eq(tasks.id, input.id))
+    .returning();
+
+  return {
+    success: true,
+    message: `Task updated successfully`,
+    data: updateTask,
+  };
+};

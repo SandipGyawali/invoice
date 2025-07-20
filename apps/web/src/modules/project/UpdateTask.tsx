@@ -45,11 +45,9 @@ export function UpdateTask({ taskData, refetch }: UpdateTaskInterface) {
     defaultValues: {
       title: taskData?.title || '',
       description: taskData?.description || '',
-      endDate: taskData?.endDate
-        ? new Date(taskData.endDate).toISOString().slice(0, 16)
-        : undefined,
-      priority: taskData?.priority || 'low',
-      tStatus: taskData?.tStatus || 'not_started',
+      endDate: taskData.endDate,
+      priority: taskData?.priority,
+      tStatus: taskData?.tStatus,
     },
   });
 
@@ -61,7 +59,9 @@ export function UpdateTask({ taskData, refetch }: UpdateTaskInterface) {
     const payload = {
       ...values,
       id: taskData.id,
-      endDate: values.endDate ? new Date(values.endDate).toISOString() : null,
+      endDate: values.endDate,
+      tenantId: 'e1065a8c',
+      projectId: taskData.projectId,
     };
 
     updateTask(payload, {
@@ -164,6 +164,38 @@ export function UpdateTask({ taskData, refetch }: UpdateTaskInterface) {
                           <SelectItem value="low">Low</SelectItem>
                           <SelectItem value="medium">Medium</SelectItem>
                           <SelectItem value="high">High</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="tStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Task Status</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select priority" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="not_started">
+                            Not Started
+                          </SelectItem>
+                          <SelectItem value="in_progress">
+                            In Progress
+                          </SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>

@@ -176,7 +176,9 @@ export default function Page() {
         <div className="mb-8">
           <div className="w-full flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold">{project?.name}</h1>
+              <h1 className="text-2xl lg:text-3xl font-bold">
+                {project?.name}
+              </h1>
               <p className="text-sm mt-1">{project?.description}</p>
             </div>
             <AddTask

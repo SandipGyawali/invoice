@@ -30,6 +30,8 @@ import { Card, CardContent } from '@invoice/ui/card';
 import { formatDate } from '@/utils/formatDate';
 import { Badge } from '@invoice/ui/badge';
 import Loader from '@/components/Loader';
+import { usePermissionStore } from '@/store/permissionStore';
+import { Button } from '@invoice/ui/button';
 
 function ModulePermission({
   module,
@@ -37,24 +39,27 @@ function ModulePermission({
   openSections,
   toggleSection,
   getPermissionType,
+  setPermission,
+  removePermission,
+  includesPermission,
 }: {
   openSections: any;
   toggleSection: any;
   module: any;
   permission: any;
   getPermissionType: any;
+  setPermission: (id: number) => void;
+  removePermission: (id: number) => void;
+  includesPermission: (id: number) => boolean;
 }) {
-  console.log(module);
-  console.log(permission);
   const form = useForm();
-
-  console.log(permission);
 
   return (
     <Form {...form}>
       <form>
         <Collapsible
           key={module}
+          defaultOpen={false}
           open={openSections[module]}
           onOpenChange={() => toggleSection(module)}
           className="border dark:border-white/25 rounded-lg p-2"
@@ -71,21 +76,21 @@ function ModulePermission({
             {permission?.map((prm, idx) => {
               return (
                 <FormField
-                  key={permission.id}
-                  // control={form.control}
+                  key={`collapsible-${prm.id}`}
+                  control={form.control}
                   name={`permissions.permission_${permission.id}`}
                   render={({ field }) => (
                     <FormItem className="ml-4 p-2 flex flex-row items-start space-x-2">
                       <FormControl>
                         <Checkbox
-                          defaultChecked={permission?.isAssigned}
+                          defaultChecked={includesPermission(prm.id)}
                           checked={field.value}
                           onCheckedChange={(checked) => {
-                            field.onChange(checked);
-                            // handlePermissionChange(
-                            //   permission.id,
-                            //   checked as boolean
-                            // );
+                            if (checked) {
+                              setPermission(prm.id);
+                            } else {
+                              removePermission(prm.id);
+                            }
                           }}
                         />
                       </FormControl>
@@ -163,9 +168,15 @@ function Page() {
   const {
     data: assignedPermissionList,
     isLoading: assignedRolePermissionLoading,
+    isSuccess: assignedRolePermissionSuccess,
   } = useQuery(trpc.roles.rolePermissions.queryOptions(queryParams));
+  const {
+    ids: permissionStoreIds,
+    setPermission,
+    removePermission,
+  } = usePermissionStore();
 
-  console.log(assignedPermissionList);
+  console.log(permissionStoreIds);
 
   useEffect(() => {
     if (roleFetchSuccess) {
@@ -174,12 +185,23 @@ function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roleFetchSuccess]);
 
+  useEffect(() => {
+    assignedPermissionList?.forEach((id) => setPermission(id.permissionId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assignedRolePermissionSuccess]);
+
   const toggleSection = (section: string): void => {
     setOpenSections((prev) => ({
       ...prev,
       [section]: !prev[section],
     }));
   };
+
+  function includesPermission(id: number): boolean {
+    const includesPermission = permissionStoreIds.find((val) => val === id);
+    if (includesPermission) return true;
+    return false;
+  }
 
   const getPermissionType = (slug: string): string => {
     if (!slug) return 'Unknown';
@@ -191,13 +213,6 @@ function Page() {
     if (action.startsWith('user')) return 'User Management';
     return 'Other';
   };
-
-  const handlePermissionChange = async (
-    permissionId: number,
-    checked: boolean
-  ) => {};
-
-  console.log(permissionData?.permission);
 
   if (roleIsLoading && assignedRolePermissionLoading)
     return <Loader className="w-full h-full" />;
@@ -221,11 +236,24 @@ function Page() {
                 permission={permission}
                 toggleSection={toggleSection}
                 getPermissionType={getPermissionType}
+                setPermission={setPermission}
+                removePermission={removePermission}
+                includesPermission={includesPermission}
               />
             );
           }
         )}
       </PageContent>
+
+      <div className="flex items-end justify-end mt-5">
+        <Button
+          onClick={() => {
+            // assign permission mutation
+          }}
+        >
+          Assign Permission
+        </Button>
+      </div>
     </PageContainer>
   );
 }

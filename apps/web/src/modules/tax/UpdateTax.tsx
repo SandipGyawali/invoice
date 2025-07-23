@@ -32,17 +32,24 @@ import {
 } from '@invoice/ui/sheet';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2, PlusIcon } from 'lucide-react';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ZTaxSchema, TZTaxSchema } from '@/schema/taxSchema';
 import { toast } from 'sonner';
+import type { ITax } from '@/interfaces/ITax';
 
 interface Props {
   refetchTaxList: () => void;
+  defaultValue: Partial<ITax>;
+  handleCloseSheet: () => void;
+  state: boolean;
 }
 
-function AddTax({ refetchTaxList }: Props) {
-  const [sheetOpen, setSheetOpen] = useState(false);
+function UpdateTax({
+  refetchTaxList,
+  //   defaultValue,
+  handleCloseSheet,
+  state,
+}: Props) {
   const trpc = useTRPC();
   const form = useForm({
     resolver: zodResolver(ZTaxSchema),
@@ -74,7 +81,7 @@ function AddTax({ refetchTaxList }: Props) {
         console.log(response);
         toast.success(response.message);
         refetchTaxList();
-        setSheetOpen(false);
+        handleCloseSheet();
       },
       onError: (err) => {
         console.log(err);
@@ -84,10 +91,10 @@ function AddTax({ refetchTaxList }: Props) {
 
   return (
     <Sheet
-      open={sheetOpen}
+      open={state}
       onOpenChange={() => {
         handleFormReset();
-        setSheetOpen((prev) => !prev);
+        handleCloseSheet();
       }}
     >
       <SheetTrigger asChild>
@@ -121,37 +128,11 @@ function AddTax({ refetchTaxList }: Props) {
                           autoFocus
                           placeholder="Enter Tax Name"
                           className={`
-                            ${
-                              fieldState.error &&
-                              'border-red-500 focus:ring-red-500'
-                            }
-                        `}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-red-500 text-sm text-start" />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="rate"
-                  render={({ field, fieldState }) => (
-                    <FormItem>
-                      <FormLabel className="text-start">Rate (%)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          min={0}
-                          placeholder="Enter Tax Name"
-                          className={`
-                            ${
-                              fieldState.error &&
-                              'border-red-500 focus:ring-red-500'
-                            }
-                        `}
+                                ${
+                                  fieldState.error &&
+                                  'border-red-500 focus:ring-red-500'
+                                }
+                            `}
                           {...field}
                         />
                       </FormControl>
@@ -238,12 +219,12 @@ function AddTax({ refetchTaxList }: Props) {
             </div>
 
             <SheetFooter>
-              <Button type="submit" variant="default">
+              <Button type="submit" variant="default" disabled={isPending}>
                 {isPending && <Loader2 className="animate-spin" />}
                 Create Tax
               </Button>
 
-              <SheetClose asChild>
+              <SheetClose asChild disabled={isPending}>
                 <Button onClick={() => handleFormReset()} variant="outline">
                   Close
                 </Button>
@@ -256,4 +237,4 @@ function AddTax({ refetchTaxList }: Props) {
   );
 }
 
-export default AddTax;
+export default UpdateTax;

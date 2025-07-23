@@ -1,10 +1,12 @@
-import { and, eq, ilike } from 'drizzle-orm';
+import { and, count, eq, ilike } from 'drizzle-orm';
 import { db } from '../../db/db.ts';
 import { tax } from '../../models/tax.ts';
 import { TRPCError } from '@trpc/server';
+import type { TZQueryOptionSchema } from '../../schema/queryOptionSchema.ts';
 
 interface TaxOptions {
   ctx: {};
+  input: TZQueryOptionSchema;
 }
 
 interface CreateTaxOptions extends TaxOptions {
@@ -12,8 +14,6 @@ interface CreateTaxOptions extends TaxOptions {
 }
 
 export const createTaxHandler = async ({ input, ctx }: CreateTaxOptions) => {
-  console.log(input);
-
   // tax name exists
   const taxExists = (
     await db
@@ -25,26 +25,45 @@ export const createTaxHandler = async ({ input, ctx }: CreateTaxOptions) => {
   if (taxExists) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: `Tax with name ${tax.name} already exists`,
+      message: `Tax with name ${input.name} already exists`,
     });
   }
 
-  await db.insert(tax).values({
-    name: input.name,
-    rate: input.rate,
-    applicableTo: input.applicableTo,
-    tenantId: input.tenantId,
-    type: input.type,
-  });
+  const newTax = await db
+    .insert(tax)
+    .values({
+      name: input.name,
+      rate: input.rate,
+      applicableTo: input.applicableTo,
+      tenantId: input.tenantId,
+      type: input.type,
+    })
+    .returning();
 
   return {
     success: true,
     message: `New Tax Created Successfully`,
+    data: newTax,
   };
 };
 
-export const listTaxHandler = async ({ ctx }: TaxOptions) => {
-  const result = await db.select().from(tax);
+export const listTaxHandler = async ({ ctx, input }: TaxOptions) => {
+  const { page, pageSize } = input;
+  const offset = (page - 1) * pageSize;
 
-  return result;
+  const [result, [{ totalCount }]] = await Promise.all([
+    db.select().from(tax).limit(input.pageSize).offset(offset),
+    db.select({ totalCount: count() }).from(tax),
+  ]);
+
+  // console.log(result);
+  console.log(totalCount);
+
+  return {
+    data: result,
+    total: Number(totalCount),
+    page: page,
+    pageSize: pageSize,
+    message: 'Tax Fetched Successfully',
+  };
 };

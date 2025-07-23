@@ -1,24 +1,19 @@
+import { z } from 'zod';
 import { publicProcedure, trpc } from '../../lib/trpc.ts';
 import { ZTaxSchema } from '../../schema/taxSchema.ts';
+import { zQueryOptionSchema } from '../../schema/queryOptionSchema.ts';
 
 export const taxRouter = trpc.router({
-  addTax: publicProcedure.input(ZTaxSchema).mutation(async ({ input, ctx }) => {
+  addTax: publicProcedure.input(ZTaxSchema).mutation(async (opts) => {
     const { createTaxHandler } = await import(
       '../../handlers/tax/tax.handler.ts'
     );
-
-    return createTaxHandler({
-      input,
-      ctx,
-    });
+    return createTaxHandler(opts);
   }),
-  listTax: publicProcedure.query(async ({ ctx }) => {
+  listTax: publicProcedure.input(zQueryOptionSchema).query(async (opts) => {
     const { listTaxHandler } = await import(
       '../../handlers/tax/tax.handler.ts'
     );
-
-    return listTaxHandler({
-      ctx,
-    });
+    return listTaxHandler(opts);
   }),
 });

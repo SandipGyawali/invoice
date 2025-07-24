@@ -1,9 +1,9 @@
 'use client';
+import Loader from '@/components/Loader';
 import { useTRPC } from '@/utils/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useMemo } from 'react';
-import { SyncLoader } from 'react-spinners';
 
 interface Permission {
   id: number;
@@ -27,9 +27,8 @@ interface RolePermissionContextType {
   //   hasPermission: (slug: string) => boolean;
 }
 
-const RolePermissionContext = createContext<RolePermissionContextType | null>(
-  null
-);
+export const RolePermissionContext =
+  createContext<RolePermissionContextType | null>(null);
 
 // custom hook to use the context
 export function useRolePermission() {
@@ -88,11 +87,7 @@ function RolePermissionContextProvider({
   }
 
   if (isLoading && !isSuccess) {
-    return (
-      <div className="flex w-screen h-screen mx-auto items-center justify-between">
-        <SyncLoader className="mx-auto" color="#b7e854" />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (

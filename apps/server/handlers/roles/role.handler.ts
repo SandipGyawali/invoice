@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { db } from '../../db/db.ts';
-import { roles } from '../../models/rbac.ts';
+import { rolePermissions, roles } from '../../models/rbac.ts';
 import { and, eq } from 'drizzle-orm';
 import type {
   TZRoleInsertSchema,
@@ -102,4 +102,43 @@ export const updateTenantRoleHandler = async ({ input, ctx }: any) => {
     message: 'Role Updated Successfully',
     success: true,
   };
+};
+
+export const getRolePermissionHandler = async ({ input, ctx }: any) => {
+  const query = db.select().from(rolePermissions).$dynamic();
+
+  const filteredConditions = Object.entries(input).reduce(
+    (acc, [key, value]) => {
+      if (value === undefined || value == null) return acc;
+
+      switch (key) {
+        case 'roleId':
+          acc.push(eq(rolePermissions.roleId, value as number));
+          break;
+        case 'tenantId':
+          acc.push(eq(rolePermissions.tenantId, value as string));
+          break;
+      }
+
+      return acc;
+    },
+    [] as any[]
+  );
+
+  const result = await query
+    .where(
+      filteredConditions.length > 0 ? and(...filteredConditions) : undefined
+    )
+    .execute();
+
+  const customResult =
+    result.length > 0
+      ? result.map((val) => {
+          return {
+            permissionId: val.permissionId,
+          };
+        })
+      : [];
+
+  return customResult;
 };

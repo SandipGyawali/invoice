@@ -162,6 +162,13 @@
       "when": 1752576478668,
       "tag": "0022_damp_veda",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1752578148754,
+      "tag": "0023_free_satana",
+      "breakpoints": true
     }
   ]
 }

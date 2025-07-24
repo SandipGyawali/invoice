@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const ZRoleSchema = z.object({
   tenantId: z.string(),
+  roleId: z.number().optional(),
 });
 
 export const ZRoleInsertSchema = z.object({
@@ -16,3 +17,8 @@ export const ZRoleInsertSchema = z.object({
 
 export type TZRoleSchema = z.infer<typeof ZRoleSchema>;
 export type TZRoleInsertSchema = z.infer<typeof ZRoleInsertSchema>;
+
+export const ZRolePermissionSchema = z.object({
+  roleId: z.number().optional(),
+  tenantId: z.string(),
+});

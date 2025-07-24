@@ -23,7 +23,6 @@ import {
   ChartBarStacked,
   FileText,
   FolderOpenDot,
-  Icon,
   Package,
   ReceiptText,
   Ruler,
@@ -145,7 +144,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             ['Roles & Permission']: data.navPermission,
             ["Product, Category & It's Unit"]: data.product,
             ['Invoice Tax']: data.tax,
-            ['Tasks & Project']: data.projects,
+            ['Tasks & Projects']: data.projects,
           }}
         />
         <NavSecondary items={data.navSecondary} className="mt-auto" />

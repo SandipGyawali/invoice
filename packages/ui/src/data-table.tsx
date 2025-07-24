@@ -71,6 +71,8 @@ import {
 } from './table';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import { Checkbox } from './checkbox';
+import {Ta} from "@invoice/web";
+
 
 type Item = {
   id: string;
@@ -199,6 +201,9 @@ export default function DataTable<TData, TValue>({
   };
 
   return (
+    <TableContextProvider>
+
+    </TableContextProvider>
     <div className="space-y-4">
       {/* Filters */}
       <div className="flex flex-wrap items-center justify-between gap-3">

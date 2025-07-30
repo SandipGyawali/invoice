@@ -3,7 +3,8 @@
         "general": "General",
         "appearance": "Appearance",
         "profile": "Profile",
-        "settings": "Settings"
+        "settings": "Settings",
+        "logout": "Logout"
     },
     "button": {
         "submit": "Submit",
@@ -13,5 +14,28 @@
     "Authentication": {
         "signUp": "SignUp",
         "login": "Login"
+    },
+    "Tax": {
+        "taxes": "Taxes",
+        "tax": "Tax"
+    },
+    "Sidebar": {
+        "settings": "Settings",
+        "profile": "Profile",
+        "taxes": "Taxes",
+        "getHelp": "Get Help",
+        "projects": "Projects",
+        "units": "Units",
+        "categories": "Categories",
+        "products": "Products",
+        "roles": "Roles",
+        "clients": "Clients",
+        "reports": "Reports",
+        "quotations": "Quotations",
+        "invoices": "Invoices",
+        "dashboard": "Dashboard",
+        "account": "Account",
+        "billing": "Billing",
+        "logout": "Logout"
     }
 }

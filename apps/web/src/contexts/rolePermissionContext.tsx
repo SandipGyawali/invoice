@@ -24,7 +24,7 @@ interface Permission {
 // Context Type
 interface RolePermissionContextType {
   permission: Map<string, Permission[]>;
-  //   hasPermission: (slug: string) => boolean;
+  hasPermission: (slug: string) => boolean;
 }
 
 export const RolePermissionContext =
@@ -79,6 +79,11 @@ function RolePermissionContextProvider({
 
   const value = {
     permission: permissionModules,
+    hasPermission: (slug: string) => {
+      const md = slug.split(':')[0]; //module
+      const perms = permissionModules.get(md);
+      return perms?.some((perm) => perm.slug === slug) ?? false;
+    },
   };
 
   if (!value.permission) {

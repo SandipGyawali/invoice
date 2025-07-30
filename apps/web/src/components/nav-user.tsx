@@ -22,6 +22,7 @@ import {
   useSidebar,
 } from '@invoice/ui/sidebar';
 import { useRouter } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 
 export function NavUser({
   user,
@@ -32,6 +33,7 @@ export function NavUser({
     avatar: string;
   };
 }) {
+  const t = useTranslations('Sidebar');
   const { isMobile } = useSidebar();
   const router = useRouter();
 
@@ -81,17 +83,17 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push('/admin/settings')}>
                 <IconUserCircle />
-                Account
+                {t('account')}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <IconCreditCard />
-                Billing
+                {t('billing')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <IconLogout />
-              Log out
+            <DropdownMenuItem className="text-red-500">
+              <IconLogout className="text-red-500" />
+              {t('logout')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

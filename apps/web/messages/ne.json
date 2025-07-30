@@ -3,10 +3,34 @@
         "general": "साधारण",
         "appearance": "रूपरंग",
         "profile": "प्रोफाइल",
-        "settings": "सेटिङ"
+        "settings": "सेटिङ",
+        "logout": "लग-आउट"
     },
     "button": {
         "submit": "बुझाउनुहोस्",
         "save": "सेभ गर्नुहोस्"
+    },
+    "Tax": {
+        "taxes": "करहरू",
+        "tax": "कर"
+    },
+    "Sidebar": {
+        "settings": "सेटिङ",
+        "profile": "प्रोफाइल",
+        "taxes": "करहरू",
+        "getHelp": "सहायता लिनुहोस्",
+        "projects": "परियोजनाहरू",
+        "units": "एकाइहरू",
+        "categories": "कोटिहरू",
+        "products": "उत्पादनहरू",
+        "roles": "भूमिकाहरू",
+        "clients": "ग्राहकहरू",
+        "reports": "रिपोर्टहरू",
+        "quotations": "कोटेसन",
+        "invoices": "बीजकहरू",
+        "dashboard": "ड्यासबोर्ड",
+        "account": "खाता",
+        "billing": "बिलिङ",
+        "logout": "लग-आउट"
     }
 }

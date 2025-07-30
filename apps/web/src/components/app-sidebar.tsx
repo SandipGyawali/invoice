@@ -29,96 +29,99 @@ import {
   UserLock,
   Users2,
 } from 'lucide-react';
-
-const data = {
-  user: {
-    name: 'Sandip',
-    email: 'sandip@gmail.com',
-    avatar: '',
-  },
-  navMain: [
-    {
-      title: 'Dashboard',
-      url: '/dashboard',
-      icon: IconDashboard,
-    },
-  ],
-  modules: [
-    {
-      title: 'Invoices',
-      url: '/invoices',
-      icon: FileText,
-    },
-    {
-      title: 'Quotation',
-      url: '/quotations',
-      icon: FileText,
-    },
-
-    {
-      title: 'Reports',
-      url: '/reports',
-      icon: ReceiptText,
-    },
-  ],
-  navPermission: [
-    {
-      title: 'Roles',
-      url: '/roles',
-      icon: UserLock,
-    },
-    {
-      title: 'Clients',
-      url: '/clients',
-      icon: Users2,
-    },
-  ],
-  product: [
-    {
-      title: 'Products',
-      url: '/products',
-      icon: Package,
-    },
-    {
-      title: 'Categories',
-      url: '/products/categories',
-      icon: ChartBarStacked,
-    },
-    {
-      title: 'Units',
-      url: '/products/units',
-      icon: Ruler,
-    },
-  ],
-  tax: [
-    {
-      title: 'Taxes',
-      url: '/tax',
-      icon: BadgePercent,
-    },
-  ],
-  projects: [
-    {
-      title: 'Projects',
-      url: '/projects',
-      icon: FolderOpenDot,
-    },
-  ],
-  navSecondary: [
-    {
-      title: 'Settings',
-      url: '/settings',
-      icon: IconSettings,
-    },
-    {
-      title: 'Get Help',
-      url: '#',
-      icon: IconHelp,
-    },
-  ],
-};
+import { useTranslations } from 'next-intl';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const t = useTranslations('Sidebar');
+
+  const data = {
+    user: {
+      name: 'Sandip',
+      email: 'sandip@gmail.com',
+      avatar: '',
+    },
+    navMain: [
+      {
+        title: t('dashboard'),
+        url: '/dashboard',
+        icon: IconDashboard,
+      },
+    ],
+    modules: [
+      {
+        title: t('invoices'),
+        url: '/invoices',
+        icon: FileText,
+      },
+      {
+        title: t('quotations'),
+        url: '/quotations',
+        icon: FileText,
+      },
+
+      {
+        title: t('reports'),
+        url: '/reports',
+        icon: ReceiptText,
+      },
+    ],
+    navPermission: [
+      {
+        title: t('roles'),
+        url: '/roles',
+        icon: UserLock,
+      },
+      {
+        title: t('clients'),
+        url: '/clients',
+        icon: Users2,
+      },
+    ],
+    product: [
+      {
+        title: t('products'),
+        url: '/products',
+        icon: Package,
+      },
+      {
+        title: t('categories'),
+        url: '/products/categories',
+        icon: ChartBarStacked,
+      },
+      {
+        title: t('units'),
+        url: '/products/units',
+        icon: Ruler,
+      },
+    ],
+    tax: [
+      {
+        title: t('taxes'),
+        url: '/tax',
+        icon: BadgePercent,
+      },
+    ],
+    projects: [
+      {
+        title: t('projects'),
+        url: '/projects',
+        icon: FolderOpenDot,
+      },
+    ],
+    navSecondary: [
+      {
+        title: t('settings'),
+        url: '/settings',
+        icon: IconSettings,
+      },
+      {
+        title: t('getHelp'),
+        url: '#',
+        icon: IconHelp,
+      },
+    ],
+  };
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>

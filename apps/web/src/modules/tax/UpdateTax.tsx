@@ -97,13 +97,6 @@ function UpdateTax({
         handleCloseSheet();
       }}
     >
-      <SheetTrigger asChild>
-        <Button size="sm" variant="default">
-          <PlusIcon size={16} aria-hidden="true" />
-          Add
-        </Button>
-      </SheetTrigger>
-
       <SheetContent>
         <Form {...form}>
           <form

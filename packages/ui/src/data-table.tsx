@@ -22,12 +22,9 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   CircleAlertIcon,
-  CircleXIcon,
   Columns3Icon,
-  EllipsisIcon,
   FilterIcon,
   ListFilterIcon,
-  PlusIcon,
   TrashIcon,
 } from 'lucide-react';
 import { cn } from './lib/utils';
@@ -71,8 +68,8 @@ import {
 } from './table';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import { Checkbox } from './checkbox';
-import {Ta} from "@invoice/web";
-
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useTRPC } from '../utils/trpc';
 
 type Item = {
   id: string;
@@ -86,8 +83,8 @@ type Item = {
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
   actions?: React.ReactNode;
+  queryFn: (opts: {}) => ReturnType<typeof useQuery>;
 }
 
 const statusFilterFn: FilterFn<Item> = (
@@ -102,8 +99,8 @@ const statusFilterFn: FilterFn<Item> = (
 
 export default function DataTable<TData, TValue>({
   columns,
-  data,
   actions,
+  queryFn,
 }: DataTableProps<TData, TValue>) {
   const id = useId();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -113,13 +110,7 @@ export default function DataTable<TData, TValue>({
   });
   const [globalFilter, setGlobalFilter] = React.useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const [sorting, setSorting] = useState<SortingState>([
-    {
-      id: 'name',
-      desc: false,
-    },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const handleDeleteRows = () => {
     const selectedRows = table.getSelectedRowModel().rows;
@@ -140,7 +131,7 @@ export default function DataTable<TData, TValue>({
   };
 
   const table = useReactTable({
-    data,
+    data: [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -201,9 +192,6 @@ export default function DataTable<TData, TValue>({
   };
 
   return (
-    <TableContextProvider>
-
-    </TableContextProvider>
     <div className="space-y-4">
       {/* Filters */}
       <div className="flex flex-wrap items-center justify-between gap-3">

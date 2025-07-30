@@ -21,7 +21,7 @@
 //   );
 // }
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronDownIcon } from 'lucide-react';
 import { Button } from '@invoice/ui/button';
 import {
@@ -36,7 +36,7 @@ import { Label } from '@invoice/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@invoice/ui/popover';
 import { IconCurrencyRupeeNepalese, IconLanguage } from '@tabler/icons-react';
 import { usePathname, useRouter } from '@/i18n/navigation';
-import { useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { Locale } from 'next-intl';
 
 const items = [
@@ -60,6 +60,11 @@ export default function LocaleSwitcher() {
   const params = useSearchParams();
   const [open, setOpen] = useState<boolean>(false);
   const [value, setValue] = useState<string>('');
+  const qryParams = useParams();
+
+  useEffect(() => {
+    setValue((qryParams.locale as string) ?? 'en');
+  }, [qryParams]);
 
   function onSelectChange(nextLocale: string) {
     router.replace(

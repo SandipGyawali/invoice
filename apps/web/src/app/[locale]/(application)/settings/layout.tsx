@@ -29,13 +29,13 @@ function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2">
             {/* <SignOutButton /> */}
             {/* <LogOut /> */}
-            <Button className="group hover:text-red-500" variant="ghost">
+            <Button className="group" variant="destructive">
               <LogOut
                 className="-ms-1 opacity-60 transition-transform group-hover:-translate-x-0.5"
                 size={16}
                 aria-hidden="true"
               />
-              Logout
+              {t('logout')}
             </Button>
           </div>
         </div>

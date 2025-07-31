@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { TRPCProvider } from '@/utils/trpc';
 import { AppRouter } from '@invoice/server';
 import superjson from 'superjson';
+import { useAuthStore } from '@/store/useAuthStore';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -41,6 +42,14 @@ function _TrpcProvider({ children }: { children: React.ReactNode }) {
         httpBatchLink({
           url: 'http://localhost:8000/trpc',
           transformer: superjson,
+          headers() {
+            const authState = useAuthStore.getState();
+            const token = authState.info.token.accessToken ?? null;
+
+            return {
+              Authorization: `Bearer ${token}`,
+            };
+          },
         }),
       ],
     })

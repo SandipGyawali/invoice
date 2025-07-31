@@ -4,12 +4,7 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import { appRouter } from './router/index.ts';
 import cors from 'cors';
 import { connectDb } from './db/db.ts';
-
-// created for each request
-const createContext = ({
-  req: Request,
-  res: Response,
-}: trpcExpress.CreateExpressContextOptions) => ({}); // no context
+import { createContext } from './lib/context.ts';
 
 class App {
   private app: Application;

@@ -22,6 +22,7 @@
         "./packages/ui",
         "./packages/tailwind",
         "./packages/languages",
+        "./packages/enums",
         "./apps/landing"
     ],
     "keywords": [
@@ -29,7 +30,9 @@
         "NextJS",
         "tRPC",
         "typescript",
-        "tailwindcss"
+        "tailwindcss",
+        "enums",
+        "languages"
     ],
     "dependencies": {
         "@trpc/server": "^11.1.3"

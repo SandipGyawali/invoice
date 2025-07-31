@@ -6,7 +6,6 @@ import {
   PageTitle,
 } from '@/components/page-layout';
 import { useTRPC } from '@/utils/trpc';
-import { Badge } from '@invoice/ui/badge';
 import { Button } from '@invoice/ui/button';
 import DataTable from '@/components/data-table';
 import {
@@ -16,8 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@invoice/ui/dropdown-menu';
-import { cn } from '@invoice/ui/lib/utils';
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { Row } from '@tanstack/react-table';
 import { EllipsisIcon, PenBox } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
@@ -27,6 +25,7 @@ import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useRolePermission } from '@/contexts/rolePermissionContext';
 import { ApplicationModules } from '@/enums/routeModule.enum';
+import { getColumns } from './columns';
 
 const AddTax = dynamic(() => import('@/modules/tax/AddTax'));
 const UpdateTax = dynamic(() => import('@/modules/tax/UpdateTax'));
@@ -38,7 +37,11 @@ function Page() {
   const [defaultData, setDefaultData] = useState<Partial<ITax>>({});
   const [openEditSheet, setOpenEditSheet] = useState<boolean>(false);
 
-  const { data: listTax, isLoading: isTaxListLoading } = useQuery(
+  const {
+    data: listTax,
+    isLoading: isTaxListLoading,
+    refetch: refetchList,
+  } = useQuery(
     trpc.tax.listTax.queryOptions({
       page: 1,
       pageSize: 10,
@@ -84,47 +87,10 @@ function Page() {
     );
   }
 
-  const columns: ColumnDef<ITax>[] = useMemo(() => {
-    return [
-      {
-        header: 'Name',
-        accessorKey: 'name',
-        cell: ({ row }) => row.getValue('name'),
-        enableHiding: false,
-      },
-      {
-        header: 'Rate (%)',
-        accessorKey: 'rate',
-        cell: ({ row }) => row.getValue('rate'),
-        enableHiding: false,
-      },
-      {
-        header: 'Status',
-        accessorKey: 'status',
-        cell: ({ row }) => (
-          <Badge
-            className={cn(
-              row.getValue('status') === 'Inactive' &&
-                'bg-destructive text-primary-foreground'
-            )}
-          >
-            {row.getValue('status') == 1 ? 'Active' : 'Inactive'}
-          </Badge>
-        ),
-      },
-      {
-        id: 'actions',
-        header: 'Actions',
-        cell: ({ row }) => <RowActions row={row} />,
-        enableHiding: false,
-      },
-    ];
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // table columns
+  const columns = useMemo(() => getColumns(RowActions), []);
 
   if (isTaxListLoading) return <Loader className="w-full h-full" />;
-
-  console.log(rbac);
 
   return (
     <PageContainer>
@@ -136,7 +102,7 @@ function Page() {
           columns={columns}
           actions={
             rbac.hasPermission(ApplicationModules.tax) ? (
-              <AddTax refetchTaxList={() => {}} />
+              <AddTax refetchTaxList={refetchList} />
             ) : null
           }
           data={listTax?.data ?? []}

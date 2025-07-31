@@ -1,5 +1,6 @@
 'use client';
 import { Link } from '@/i18n/navigation';
+import { useAuthStore, UserInfo } from '@/store/useAuthStore';
 import { useTRPC } from '@/utils/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@invoice/ui/button';
@@ -33,6 +34,7 @@ interface Props {
 }
 
 function LoginForm({ className, props }: Props) {
+  const { setInfo } = useAuthStore();
   const trpc = useTRPC();
   const router = useRouter();
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -52,6 +54,15 @@ function LoginForm({ className, props }: Props) {
 
     mutate(modifyData, {
       onSuccess: (data) => {
+        console.log(data);
+        setInfo({
+          user: {
+            ...data.user,
+          } as UserInfo,
+          token: {
+            ...data.token,
+          },
+        });
         router.replace('/dashboard');
       },
       onError: (err) => {},

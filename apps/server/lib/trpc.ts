@@ -17,19 +17,23 @@ export const trpc = initTRPC.context<TRPCContext>().create({
  */
 export const publicProcedure = trpc.procedure;
 
+/**
+ * Protected route that requires authentication.
+ */
 export const privateProcedure = trpc.procedure.use(({ ctx, next }) => {
-  const { user } = ctx;
+  const { userId, tenantId } = ctx;
 
-  if (!user) {
+  if (!userId && !tenantId) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
-      message: 'Should login to access information',
+      message: 'Unauthorized: Missing user or tenant credentials.',
     });
   }
 
   return next({
     ctx: {
-      user,
+      userId,
+      tenantId,
     },
   });
 });

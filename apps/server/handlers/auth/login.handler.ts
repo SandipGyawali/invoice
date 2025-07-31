@@ -5,6 +5,7 @@ import { TRPCError } from '@trpc/server';
 import type { TZLoginSchema } from '../../schema/authSchema.ts';
 import { compare } from 'bcryptjs';
 import { signAccessToken, signRefreshToken } from '../../utils/jwt.ts';
+import { getUserPermissionSlugs } from '../../utils/userPermissionSlug.ts';
 
 type LoginUserOptions = {
   ctx: {};
@@ -55,15 +56,23 @@ export const loginUserHandler = async ({ input }: LoginUserOptions) => {
     });
   }
 
+  // get the permission slugs for the user
+  const slugs = await getUserPermissionSlugs({
+    userId: userExists.id,
+    tenantId: userExists.tenantId as string,
+  });
+
   //   create jwt token and with refresh token and upsert in account table then
   // return to the frontend as response
   const accessToken = signAccessToken({
     userId: userExists?.id,
     tenantId: userExists?.tenantId,
+    permissions: slugs,
   });
 
   const refreshToken = signRefreshToken({
     userId: userExists.id,
+    tenantId: userExists?.tenantId,
   });
 
   const now = new Date();

@@ -1,5 +1,5 @@
 'use client';
-import React, { useId, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import {
   ColumnDef,
   FilterFn,
@@ -70,8 +70,8 @@ import {
   TableHeader,
   TableRow,
 } from '@invoice/ui/table';
-import { rankItem } from '@tanstack/match-sorter-utils';
 import { Checkbox } from '@invoice/ui/checkbox';
+import { useSearchParams } from 'next/navigation';
 
 type Item = {
   id: string;
@@ -85,7 +85,12 @@ type Item = {
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data: {
+    data: TData[];
+    total: number;
+    page: number;
+    pageSize: number;
+  };
   actions?: React.ReactNode;
 }
 
@@ -104,15 +109,22 @@ export default function DataTable<TData, TValue>({
   data,
   actions,
 }: DataTableProps<TData, TValue>) {
+  const searchParams = useSearchParams();
+  const page = searchParams.get('page');
+  const pageSize = searchParams.get('pageSize');
+  const initialSearch = searchParams.get('search');
+  const params = new URLSearchParams();
+
   const id = useId();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-  const [globalFilter, setGlobalFilter] = React.useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: page ? Number(page) : 0,
+    pageSize: pageSize ? Number(pageSize) : 10,
+  });
+  const [globalFilter, setGlobalFilter] = React.useState<string>(
+    initialSearch || ''
+  );
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: 'name',
@@ -120,31 +132,52 @@ export default function DataTable<TData, TValue>({
     },
   ]);
 
+  // pagination sync
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', pagination.pageIndex.toString());
+    params.set('pageSize', pagination.pageSize.toString());
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    if (typeof window !== undefined) {
+      window.history.replaceState(null, '', newUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination]);
+
+  // global filter change
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('search', globalFilter);
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      if (typeof window !== undefined) {
+        window.history.replaceState(null, '', newUrl);
+      }
+    }, 200); // debounce
+
+    return () => clearTimeout(handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [globalFilter]);
+
   const handleDeleteRows = () => {
     const selectedRows = table.getSelectedRowModel().rows;
-    const updatedData = data.filter(
+    const updatedData = data?.data.filter(
       (item) => !selectedRows.some((row) => row.original.id === item.id)
     );
     // setData(updatedData);
     table.resetRowSelection();
   };
 
-  const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
-    const itemRank = rankItem(row.getValue(columnId), value);
-    // Store the ranking info
-    addMeta(itemRank);
-    // Return if the item should be filtered in/out
-    return itemRank.passed;
-  };
-
   const table = useReactTable({
-    data,
+    data: data?.data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
     enableSortingRemoval: false,
+    manualPagination: true,
+    pageCount: Math.ceil(data.total / data.pageSize),
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
     onColumnVisibilityChange: setColumnVisibility,
@@ -156,8 +189,15 @@ export default function DataTable<TData, TValue>({
       globalFilter,
       columnVisibility,
     },
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: fuzzyFilter,
+    onGlobalFilterChange: (searchValue: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('search', searchValue);
+      // params.set('page', '0'); // reset page on new search
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      if (typeof window !== 'undefined') {
+        window.history.replaceState(null, '', newUrl);
+      }
+    },
   });
 
   // Get unique status values
@@ -209,21 +249,13 @@ export default function DataTable<TData, TValue>({
             <Input
               id={`${id}-input`}
               ref={inputRef}
-              className={cn(
-                'peer min-w-60 ps-9'
-                // Boolean(table.getColumn('name')?.getFilterValue()) && 'pe-9'
-              )}
-              value={
-                '' // (table.getColumn('name')?.getFilterValue() ?? '') as string
-              }
-              onChange={
-                (e) => {}
-                // table.getColumn('name')?.setFilterValue(e.target.value)
-              }
-              placeholder="Filter by name or email..."
+              className="min-w-60 ps-9 peer"
+              value={table.getState().globalFilter ?? ''}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              placeholder="Filter by Searching..."
               type="text"
-              aria-label="Filter by name or email"
             />
+
             <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <ListFilterIcon size={16} aria-hidden="true" />
             </div>

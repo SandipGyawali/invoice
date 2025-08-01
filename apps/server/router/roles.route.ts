@@ -1,4 +1,5 @@
-import { publicProcedure, trpc } from '../lib/trpc.ts';
+import { z } from 'zod';
+import { privateProcedure, publicProcedure, trpc } from '../lib/trpc.ts';
 import {
   ZRoleInsertSchema,
   ZRolePermissionSchema,
@@ -33,5 +34,17 @@ export const roleRouter = trpc.router({
         '../handlers/roles/role.handler.ts'
       );
       return getRolePermissionHandler(opts);
+    }),
+  userBasedPermissions: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(async (opts) => {
+      const { userBasedPermissionsHandler } = await import(
+        '../handlers/roles/role.handler.ts'
+      );
+      return userBasedPermissionsHandler(opts);
     }),
 });

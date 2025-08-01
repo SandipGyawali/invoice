@@ -6,6 +6,7 @@ import type {
   TZRoleInsertSchema,
   TZRoleSchema,
 } from '../../schema/roleSchema.ts';
+import { getUserPermissionSlugs } from '../../utils/userPermissionSlug.ts';
 
 type RoleOptions = {
   ctx: {};
@@ -141,4 +142,23 @@ export const getRolePermissionHandler = async ({ input, ctx }: any) => {
       : [];
 
   return customResult;
+};
+
+export const userBasedPermissionsHandler = async ({
+  input,
+  ctx,
+}: {
+  input: {
+    userId: string;
+  };
+  ctx: {
+    tenantId: string;
+  };
+}) => {
+  const slugs = await getUserPermissionSlugs({
+    userId: input.userId,
+    tenantId: ctx.tenantId,
+  });
+
+  return slugs;
 };

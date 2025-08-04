@@ -7,17 +7,16 @@ import {
 } from '@/components/page-layout';
 import { ROUTES } from '@/enums/route.enum';
 import { useTRPC } from '@/utils/trpc';
-import { Badge } from '@invoice/ui/badge';
 import { Button } from '@invoice/ui/button';
 import DataTable from '@/components/data-table';
-import { cn } from '@invoice/ui/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { ColumnDef } from '@tanstack/react-table';
 import { PlusIcon } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { listQueryOpts } from '@/utils/defaultQueryOpts';
 import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
 import { StatusEnumType } from '@/interfaces/IStatus';
+import { useMemo } from 'react';
+import { getColumns } from './columns';
 
 function Page() {
   const searchParams = useSearchParams();
@@ -38,54 +37,7 @@ function Page() {
     })
   );
 
-  const columns: ColumnDef<any>[] = [
-    {
-      accessorKey: 'pName',
-      header: 'Name',
-      enableSorting: true,
-      enableHiding: true,
-      cell: ({ row }) => row.getValue('pName'),
-    },
-    {
-      accessorKey: 'sku',
-      header: 'Quantity',
-      enableHiding: true,
-      enableSorting: true,
-    },
-    {
-      accessorKey: 'pPrice',
-      header: 'Purchase Price',
-      enableHiding: true,
-      enableSorting: true,
-    },
-    {
-      accessorKey: 'sPrice',
-      header: 'Selling Price',
-      enableHiding: true,
-      enableSorting: true,
-    },
-    {
-      header: 'Status',
-      accessorKey: 'status',
-      cell: ({ row }) => (
-        <Badge
-          className={cn(
-            row.getValue('status') === 'Inactive' &&
-              'bg-destructive text-primary-foreground'
-          )}
-        >
-          {row.getValue('status') == 1 ? 'Active' : 'Inactive'}
-        </Badge>
-      ),
-    },
-    // {
-    //   id: 'actions',
-    //   header: 'Actions',
-    //   cell: ({ row }) => <RowActions row={row} />,
-    //   size: 60,
-    //   enableHiding: false,
-    // },
-  ];
+  const columns = useMemo(() => getColumns(() => <>Hello</>), []);
 
   return (
     <PageContainer>

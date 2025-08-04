@@ -9,7 +9,6 @@ import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
 import { StatusEnumType } from '@/interfaces/IStatus';
 import UpdateProductCategory from '@/modules/product/UpdateProductCategory';
 import { useTRPC } from '@/utils/trpc';
-import { Badge } from '@invoice/ui/badge';
 import { Button } from '@invoice/ui/button';
 import DataTable from '@/components/data-table';
 import {
@@ -19,14 +18,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@invoice/ui/dropdown-menu';
-import { cn } from '@invoice/ui/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { Row } from '@tanstack/react-table';
 import { EllipsisIcon, PenBox } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { listQueryOpts } from '@/utils/defaultQueryOpts';
+import { getColumns } from './columns';
 
 const AddProductCategory = dynamic(
   () => import('@/modules/product/AddProductCategory')
@@ -87,36 +86,7 @@ function Page() {
     );
   }
 
-  const columns: ColumnDef<any>[] = [
-    {
-      accessorKey: 'catName',
-      header: 'Name',
-      enableSorting: true,
-      enableHiding: true,
-      cell: ({ row }) => row.getValue('catName'),
-    },
-    {
-      header: 'Status',
-      accessorKey: 'status',
-      cell: ({ row }) => (
-        <Badge
-          className={cn(
-            row.getValue('status') === 'Inactive' &&
-              'bg-destructive text-primary-foreground'
-          )}
-        >
-          {row.getValue('status') == 1 ? 'Active' : 'Inactive'}
-        </Badge>
-      ),
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => <RowActions row={row} />,
-      size: 60,
-      enableHiding: false,
-    },
-  ];
+  const columns = useMemo(() => getColumns(RowActions), []);
 
   return (
     <PageContainer>

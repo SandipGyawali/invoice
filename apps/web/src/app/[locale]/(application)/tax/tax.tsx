@@ -24,18 +24,22 @@ import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import Loader from '@/components/Loader';
 import { useRolePermission } from '@/contexts/rolePermissionContext';
-import { ApplicationModules } from '@/enums/routeModule.enum';
+import {
+  ApplicationModules,
+  ModuleOperations,
+} from '@invoice/enums/routeModule.enum';
 import { getColumns } from './columns';
 import { useSearchParams } from 'next/navigation';
 import { listQueryOpts } from '@/utils/defaultQueryOpts';
 import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
+import { StatusEnumType } from '@/interfaces/IStatus';
 
 const AddTax = dynamic(() => import('@/modules/tax/AddTax'));
 const UpdateTax = dynamic(() => import('@/modules/tax/UpdateTax'));
 
 function Page() {
   const searchParams = useSearchParams();
-  const rbac = useRolePermission();
+  const { hasPermission } = useRolePermission();
   const t = useTranslations('Tax');
   const trpc = useTRPC();
   const [defaultData, setDefaultData] = useState<Partial<ITax>>({});
@@ -44,6 +48,7 @@ function Page() {
   const page = searchParams.get('page');
   const pageSize = searchParams.get('pageSize');
   const search = searchParams.get('search');
+  const status = searchParams.get('status');
 
   const {
     data: listTax,
@@ -51,9 +56,10 @@ function Page() {
     refetch: refetchList,
   } = useQuery(
     trpc.tax.listTax.queryOptions({
-      page: page ? Number(page + 1) : DEFAULT_PAGE_INDEX + 1,
+      page: page ? Number(page) + 1 : DEFAULT_PAGE_INDEX + 1,
       pageSize: pageSize ? Number(pageSize) : DEFAULT_PAGE_SIZE,
       search: search ?? '',
+      status: status == '' ? null : (status as StatusEnumType),
     })
   );
 
@@ -78,7 +84,9 @@ function Page() {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
-          {rbac.hasPermission(ApplicationModules.tax) ? (
+          {hasPermission(
+            `${ApplicationModules.tax}:${ModuleOperations.update}`
+          ) ? (
             <DropdownMenuGroup>
               <DropdownMenuItem
                 className="flex justify-between"
@@ -108,7 +116,9 @@ function Page() {
         <DataTable
           columns={columns}
           actions={
-            rbac.hasPermission(ApplicationModules.tax) ? (
+            hasPermission(
+              `${ApplicationModules.tax}:${ModuleOperations.create}`
+            ) ? (
               <AddTax refetchTaxList={refetchList} />
             ) : null
           }

@@ -24,7 +24,7 @@ export function ProjectStatusBadge({ row }: BadgeProps) {
   return (
     <Badge
       className={cn(
-        status === 'not_started' && 'bg-destructive text-primary-foreground',
+        status === 'not_started' && 'bg-destructive text-white',
         status === 'in_progress' && 'bg-yellow-500 text-primary-foreground',
         status === 'completed' && 'bg-primary text-primary-foreground'
       )}

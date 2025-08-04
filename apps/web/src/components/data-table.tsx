@@ -22,6 +22,7 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   CircleAlertIcon,
+  CircleXIcon,
   Columns3Icon,
   FilterIcon,
   ListFilterIcon,
@@ -71,7 +72,10 @@ import {
   TableRow,
 } from '@invoice/ui/table';
 import { Checkbox } from '@invoice/ui/checkbox';
-import { useSearchParams } from 'next/navigation';
+import {
+  getInitialPaginationFromURL,
+  getInitialSearchFromURL,
+} from '@/utils/params';
 
 type Item = {
   id: string;
@@ -109,21 +113,14 @@ export default function DataTable<TData, TValue>({
   data,
   actions,
 }: DataTableProps<TData, TValue>) {
-  const searchParams = useSearchParams();
-  const page = searchParams.get('page');
-  const pageSize = searchParams.get('pageSize');
-  const initialSearch = searchParams.get('search');
-  const params = new URLSearchParams();
-
   const id = useId();
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const inputRef = useRef<HTMLInputElement>(null);
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: page ? Number(page) : 0,
-    pageSize: pageSize ? Number(pageSize) : 10,
-  });
+  const [pagination, setPagination] = useState<PaginationState>(
+    getInitialPaginationFromURL()
+  );
   const [globalFilter, setGlobalFilter] = React.useState<string>(
-    initialSearch || ''
+    getInitialSearchFromURL()
   );
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -132,34 +129,33 @@ export default function DataTable<TData, TValue>({
     },
   ]);
 
-  // pagination sync
+  // pagination params filter
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     params.set('page', pagination.pageIndex.toString());
     params.set('pageSize', pagination.pageSize.toString());
-
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     if (typeof window !== undefined) {
       window.history.replaceState(null, '', newUrl);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagination]);
 
-  // global filter change
+  // search params filter
   useEffect(() => {
     const handler = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
       params.set('search', globalFilter);
       const newUrl = `${window.location.pathname}?${params.toString()}`;
+
       if (typeof window !== undefined) {
         window.history.replaceState(null, '', newUrl);
       }
-    }, 200); // debounce
+    }, 300); // optional debounce
 
     return () => clearTimeout(handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [globalFilter]);
 
+  // handle delete rows
   const handleDeleteRows = () => {
     const selectedRows = table.getSelectedRowModel().rows;
     const updatedData = data?.data.filter(
@@ -189,54 +185,68 @@ export default function DataTable<TData, TValue>({
       globalFilter,
       columnVisibility,
     },
-    onGlobalFilterChange: (searchValue: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('search', searchValue);
-      // params.set('page', '0'); // reset page on new search
-      const newUrl = `${window.location.pathname}?${params.toString()}`;
-      if (typeof window !== 'undefined') {
-        window.history.replaceState(null, '', newUrl);
-      }
-    },
   });
 
-  // Get unique status values
-  const uniqueStatusValues = useMemo(() => {
-    const statusColumn = table.getColumn('status');
-    if (!statusColumn) return [];
-    const values = Array.from(statusColumn.getFacetedUniqueValues().keys());
+  // status params filter
+  useEffect(() => {
+    const filterValue = table.getColumn('status')?.getFilterValue() as
+      | string[]
+      | undefined;
 
-    return values.sort();
-  }, [table.getColumn('status')?.getFacetedUniqueValues()]);
+    const params = new URLSearchParams(window.location.search);
+    // for initial status value by default
+    // const currentStatus = params.get('status');
+    // if (!currentStatus) {
+    //   params.set('status', '');
+    //   const newUrl = `${window.location.pathname}?${params.toString()}`;
+    //   if (typeof window != undefined) {
+    //     window.history.replaceState(null, '', newUrl);
+    //   }
+    //   return;
+    // }
+
+    if (filterValue && filterValue.length > 0) {
+      params.set('status', filterValue.join(','));
+    } else {
+      params.delete('status');
+    }
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    if (typeof window != undefined) {
+      window.history.replaceState(null, '', newUrl);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [table.getColumn('status')?.getFilterValue()]);
 
   // Get counts for each status
   const statusCounts = useMemo(() => {
     const statusColumn = table.getColumn('status');
     if (!statusColumn) return new Map();
     return statusColumn.getFacetedUniqueValues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table.getColumn('status')?.getFacetedUniqueValues()]);
 
   const selectedStatuses = useMemo(() => {
     const filterValue = table.getColumn('status')?.getFilterValue() as string[];
     return filterValue ?? [];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table.getColumn('status')?.getFilterValue()]);
 
   const handleStatusChange = (checked: boolean, value: string) => {
-    const filterValue = table.getColumn('status')?.getFilterValue() as string[];
-    const newFilterValue = filterValue ? [...filterValue] : [];
+    const currentValue = table.getColumn('status')?.getFilterValue() as
+      | string[]
+      | undefined;
 
     if (checked) {
-      newFilterValue.push(value);
+      // Replace any existing value with the new one
+      table.getColumn('status')?.setFilterValue([value]);
     } else {
-      const index = newFilterValue.indexOf(value);
-      if (index > -1) {
-        newFilterValue.splice(index, 1);
+      // If the same one is unchecked, clear the filter
+      if (currentValue?.includes(value)) {
+        table.getColumn('status')?.setFilterValue(undefined);
       }
     }
-
-    table
-      .getColumn('status')
-      ?.setFilterValue(newFilterValue.length ? newFilterValue : undefined);
   };
 
   return (
@@ -259,20 +269,6 @@ export default function DataTable<TData, TValue>({
             <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <ListFilterIcon size={16} aria-hidden="true" />
             </div>
-            {/* {Boolean(table.getColumn('name')?.getFilterValue()) && (
-              <button
-                className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-                aria-label="Clear filter"
-                onClick={() => {
-                  table.getColumn('name')?.setFilterValue('');
-                  if (inputRef.current) {
-                    inputRef.current.focus();
-                  }
-                }}
-              >
-                <CircleXIcon size={16} aria-hidden="true" />
-              </button>
-            )} */}
           </div>
           {/* Filter by status */}
           <Popover>
@@ -297,26 +293,63 @@ export default function DataTable<TData, TValue>({
                   Filters
                 </div>
                 <div className="space-y-3">
-                  {uniqueStatusValues.map((value, i) => (
-                    <div key={value} className="flex items-center gap-2">
+                  <div className="space-y-3">
+                    {/* Active */}
+                    <div className="flex items-center gap-2">
                       <Checkbox
-                        id={`${id}-${i}`}
-                        checked={selectedStatuses.includes(value)}
+                        id={`${id}-active`}
+                        checked={selectedStatuses.includes('1')}
                         onCheckedChange={(checked: boolean) =>
-                          handleStatusChange(checked, value)
+                          handleStatusChange(checked, '1')
                         }
                       />
                       <Label
-                        htmlFor={`${id}-${i}`}
+                        htmlFor={`${id}-active`}
                         className="flex grow justify-between gap-2 font-normal"
                       >
-                        {value == 1 ? 'Active' : 'Inactive'}{' '}
-                        <span className="text-muAted-foreground ms-2 text-xs">
-                          {statusCounts.get(value)}
+                        Active
+                        <span className="text-muted-foreground ms-2 text-xs">
+                          {statusCounts.get('1') ?? 0}
                         </span>
                       </Label>
                     </div>
-                  ))}
+
+                    {/* Inactive */}
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id={`${id}-inactive`}
+                        checked={selectedStatuses.includes('0')}
+                        onCheckedChange={(checked: boolean) =>
+                          handleStatusChange(checked, '0')
+                        }
+                      />
+                      <Label
+                        htmlFor={`${id}-inactive`}
+                        className="flex grow justify-between gap-2 font-normal"
+                      >
+                        Inactive
+                        <span className="text-muted-foreground ms-2 text-xs">
+                          {statusCounts.get('0') ?? 0}
+                        </span>
+                      </Label>
+                    </div>
+
+                    {/* Clear Button */}
+                    {selectedStatuses.length > 0 && (
+                      <div className="pt-2">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="text-xs text-foreground"
+                          onClick={() =>
+                            table.getColumn('status')?.setFilterValue(undefined)
+                          }
+                        >
+                          Clear Status Filter
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </PopoverContent>

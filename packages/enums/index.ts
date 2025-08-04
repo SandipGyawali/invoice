@@ -1,3 +1,1 @@
-import { ApplicationModules, ModuleOperations } from './src/routeModule.enum';
-
-export { ApplicationModules, ModuleOperations };
+export { ApplicationModules, ModuleOperations } from './src/routeModule.enum';

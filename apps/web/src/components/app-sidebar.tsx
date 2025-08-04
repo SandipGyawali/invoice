@@ -30,14 +30,21 @@ import {
   Users2,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import {
+  ApplicationModules,
+  ModuleOperations,
+} from '@invoice/enums/routeModule.enum';
+import { filterByPermission } from '@/utils/filterPermission';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { info } = useAuthStore();
   const t = useTranslations('Sidebar');
 
   const data = {
     user: {
-      name: 'Sandip',
-      email: 'sandip@gmail.com',
+      name: info.user.name ?? '',
+      email: info.user.email ?? '',
       avatar: '',
     },
     navMain: [
@@ -45,6 +52,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('dashboard'),
         url: '/dashboard',
         icon: IconDashboard,
+        permission: '',
       },
     ],
     modules: [
@@ -52,17 +60,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('invoices'),
         url: '/invoices',
         icon: FileText,
+        permission: `${ApplicationModules.invoice}:${ModuleOperations.list}`,
       },
       {
         title: t('quotations'),
         url: '/quotations',
         icon: FileText,
+        permission: `${ApplicationModules.quotation}:${ModuleOperations.list}`,
       },
 
       {
         title: t('reports'),
         url: '/reports',
         icon: ReceiptText,
+        permission: `${ApplicationModules.report}:${ModuleOperations.list}`,
       },
     ],
     navPermission: [
@@ -70,11 +81,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('roles'),
         url: '/roles',
         icon: UserLock,
+        permission: `${ApplicationModules.role}:${ModuleOperations.list}`,
       },
       {
         title: t('clients'),
         url: '/clients',
         icon: Users2,
+        permission: `${ApplicationModules.client}:${ModuleOperations.list}`,
       },
     ],
     product: [
@@ -82,16 +95,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('products'),
         url: '/products',
         icon: Package,
+        permission: `${ApplicationModules.product}:${ModuleOperations.list}`,
       },
       {
         title: t('categories'),
         url: '/products/categories',
         icon: ChartBarStacked,
+        permission: `${ApplicationModules.productCategory}:${ModuleOperations.list}`,
       },
       {
         title: t('units'),
         url: '/products/units',
         icon: Ruler,
+        permission: `${ApplicationModules.unit}:${ModuleOperations.list}`,
       },
     ],
     tax: [
@@ -99,6 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('taxes'),
         url: '/tax',
         icon: BadgePercent,
+        permission: `${ApplicationModules.tax}:${ModuleOperations.list}`,
       },
     ],
     projects: [
@@ -106,6 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('projects'),
         url: '/projects',
         icon: FolderOpenDot,
+        permission: `${ApplicationModules.project}:${ModuleOperations.list}`,
       },
     ],
     navSecondary: [
@@ -113,13 +131,58 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t('settings'),
         url: '/settings',
         icon: IconSettings,
+        permission: '',
       },
       {
         title: t('getHelp'),
         url: '#',
         icon: IconHelp,
+        permission: '',
       },
     ],
+  };
+
+  const filteredNavMain = filterByPermission(data.navMain, info.permissions);
+  const filteredModules = filterByPermission(data.modules, info.permissions);
+  const filteredRolePermissions = filterByPermission(
+    data.navPermission,
+    info.permissions
+  );
+  const filteredProductCategoryUnits = filterByPermission(
+    data.product,
+    info.permissions
+  );
+  const filteredInvoiceTax = filterByPermission(data.tax, info.permissions);
+  const filteredTaskProjects = filterByPermission(
+    data.projects,
+    info.permissions
+  );
+
+  const finalItems = {
+    ...(filteredNavMain.length > 0 && {
+      ['Main']: filterByPermission(data.navMain, info.permissions),
+    }),
+    ...(filteredModules.length > 0 && {
+      ['Modules']: filterByPermission(data.modules, info.permissions),
+    }),
+    ...(filteredRolePermissions.length > 0 && {
+      ['Roles & Permission']: filterByPermission(
+        data.navPermission,
+        info.permissions
+      ),
+    }),
+    ...(filteredProductCategoryUnits.length > 0 && {
+      ["Product, Category & It's Unit"]: filterByPermission(
+        data.product,
+        info.permissions
+      ),
+    }),
+    ...(filteredInvoiceTax.length > 0 && {
+      ['Invoice Tax']: filterByPermission(data.tax, info.permissions),
+    }),
+    ...(filteredTaskProjects.length > 0 && {
+      ['Tasks & Projects']: filterByPermission(data.projects, info.permissions),
+    }),
   };
 
   return (
@@ -140,16 +203,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain
-          items={{
-            ['Main']: data.navMain,
-            ['Modules']: data.modules,
-            ['Roles & Permission']: data.navPermission,
-            ["Product, Category & It's Unit"]: data.product,
-            ['Invoice Tax']: data.tax,
-            ['Tasks & Projects']: data.projects,
-          }}
-        />
+        <NavMain items={finalItems} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

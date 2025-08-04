@@ -15,6 +15,7 @@ interface Item {
   title: string;
   url: string;
   icon?: Icon;
+  permission: string;
 }
 
 interface Items {

@@ -19,6 +19,9 @@
         "taxes": "Taxes",
         "tax": "Tax"
     },
+    "Project": {
+        "projects": "Projects"
+    },
     "Sidebar": {
         "settings": "Settings",
         "profile": "Profile",

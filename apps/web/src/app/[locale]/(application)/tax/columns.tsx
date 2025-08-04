@@ -14,12 +14,14 @@ export function getColumns(
       accessorKey: 'name',
       cell: ({ row }) => row.getValue('name'),
       enableHiding: false,
+      enableGlobalFilter: false,
     },
     {
       header: 'Rate (%)',
       accessorKey: 'rate',
       cell: ({ row }) => row.getValue('rate'),
       enableHiding: false,
+      enableGlobalFilter: false,
     },
     {
       header: 'Status',
@@ -27,13 +29,14 @@ export function getColumns(
       cell: ({ row }) => (
         <Badge
           className={cn(
-            row.getValue('status') === 'Inactive' &&
-              'bg-destructive text-primary-foreground'
+            row.getValue('status') === '0' &&
+              'bg-destructive text-primary-foreground text-white'
           )}
         >
           {row.getValue('status') == 1 ? 'Active' : 'Inactive'}
         </Badge>
       ),
+      enableGlobalFilter: false,
     },
     {
       id: 'actions',
@@ -42,6 +45,7 @@ export function getColumns(
         return rowActions ? rowActions({ row }) : null;
       },
       enableHiding: false,
+      enableGlobalFilter: false,
     },
   ];
 }

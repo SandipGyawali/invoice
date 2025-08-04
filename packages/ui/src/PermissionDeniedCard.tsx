@@ -1,34 +1,40 @@
-import { Card, CardContent, CardHeader, CardTitle } from './card';
-import { ShieldAlert, ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { Button } from './button';
+'use client';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from '@invoice/ui/card';
+import { Button } from '@invoice/ui/button';
+import { AlertTriangle, Home } from 'lucide-react';
 
-function PermissionDeniedCard() {
-  const router = useRouter();
-
+export function AccessDeniedCard() {
   return (
-    <Card className="max-w-3xl mx-5 mx-auto mt-24 shadow-sm border border-red-300 bg-red-500/5 dark:bg-red-500/10">
-      <CardHeader className="flex items-center gap-3 text-red-700 dark:text-red-300">
-        <ShieldAlert className="h-10 w-10" />
-        <CardTitle className="text-2xl font-bold tracking-tight dark:text-white">
-          Access Denied
-        </CardTitle>
+    <Card className="w-full max-w-md mx-auto mt-20 border-red-300 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200 shadow-sm">
+      <CardHeader className="flex flex-col items-center text-center">
+        <AlertTriangle className="w-12 h-12 mb-2 text-red-500 dark:text-red-300" />
+        <CardTitle className="text-xl font-bold">Access Denied</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-sm text-foreground">
-          You don’t have permission to view this page. Reach out to your admin
-          if this seems wrong.
+      <CardContent className="text-center">
+        <p className="text-sm">
+          You do not have the necessary permissions to view this page or perform
+          this action.
         </p>
-
-        <div className="pt-4 mx-auto w-full">
-          <Button variant="outline" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Return Back
-          </Button>
-        </div>
       </CardContent>
+      <CardFooter className="flex justify-center gap-3">
+        <Button
+          variant="destructive"
+          onClick={() => {
+            if (typeof window !== undefined) {
+              window.location.href = '/dashboard';
+            }
+          }}
+        >
+          <Home />
+          Home
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
-
-export { PermissionDeniedCard };

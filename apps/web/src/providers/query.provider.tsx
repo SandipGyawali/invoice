@@ -50,6 +50,25 @@ function _TrpcProvider({ children }: { children: React.ReactNode }) {
               Authorization: `Bearer ${token}`,
             };
           },
+          // Refresh AccessToken sample code.
+          // fetch: async (input, init) => {
+          //   let res = await fetch(input, init);
+
+          //   if (res.status === 401) {
+          //     await refreshAccessToken();
+          //     const token = getNewToken();
+          //     const retryInit = {
+          //       ...init,
+          //       headers: {
+          //         ...init?.headers,
+          //         Authorization: `Bearer ${token}`,
+          //       },
+          //     };
+          //     res = await fetch(input, retryInit);
+
+          //     return res;
+          //   }
+          // },
         }),
       ],
     })

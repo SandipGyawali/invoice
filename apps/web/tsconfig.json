@@ -27,8 +27,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "../../packages/enums/routeModule.enum.ts"
+    ".next/types/**/*.ts"
+    // "../../packages/enums/routeModule.enum.ts"
   ],
   "exclude": ["node_modules"]
 }

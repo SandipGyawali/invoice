@@ -21,8 +21,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@invoice/ui/form';
-import { useQuery } from '@tanstack/react-query';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -165,11 +165,9 @@ function Page() {
     isSuccess: roleFetchSuccess,
     isLoading: roleIsLoading,
   } = useQuery(trpc.roles.tenantRoles.queryOptions(queryParams));
-  const {
-    data: assignedPermissionList,
-    isLoading: assignedRolePermissionLoading,
-    isSuccess: assignedRolePermissionSuccess,
-  } = useQuery(trpc.roles.rolePermissions.queryOptions(queryParams));
+  const { mutate: assignPermission, isPending: isAssignPermissionPending } =
+    useMutation(trpc.roles.assignPermissionOnTenantRole.mutationOptions({}));
+
   const {
     ids: permissionStoreIds,
     setPermission,
@@ -185,10 +183,10 @@ function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roleFetchSuccess]);
 
-  useEffect(() => {
-    assignedPermissionList?.forEach((id) => setPermission(id.permissionId));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assignedRolePermissionSuccess]);
+  // useEffect(() => {
+  //   assignedPermissionList?.forEach((id) => setPermission(id.permissionId));
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [assignedRolePermissionSuccess]);
 
   const toggleSection = (section: string): void => {
     setOpenSections((prev) => ({
@@ -214,8 +212,7 @@ function Page() {
     return 'Other';
   };
 
-  if (roleIsLoading && assignedRolePermissionLoading)
-    return <Loader className="w-full h-full" />;
+  if (roleIsLoading) return <Loader className="w-full h-full" />;
 
   return (
     <PageContainer className="max-w-5xl">
@@ -247,10 +244,15 @@ function Page() {
 
       <div className="flex items-end justify-end mt-5">
         <Button
+          disabled={!roleData?.id || isAssignPermissionPending}
           onClick={() => {
-            // assign permission mutation
+            assignPermission({
+              roleId: roleData?.id as number,
+              permissions: permissionStoreIds,
+            });
           }}
         >
+          {isAssignPermissionPending && <Loader2 className="animate-spin" />}
           Assign Permission
         </Button>
       </div>

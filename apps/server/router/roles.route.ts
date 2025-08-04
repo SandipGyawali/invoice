@@ -1,5 +1,7 @@
-import { publicProcedure, trpc } from '../lib/trpc.ts';
+import { z } from 'zod';
+import { privateProcedure, publicProcedure, trpc } from '../lib/trpc.ts';
 import {
+  ZAssignPermissionOnTenantRoleSchema,
   ZRoleInsertSchema,
   ZRolePermissionSchema,
   ZRoleSchema,
@@ -26,6 +28,15 @@ export const roleRouter = trpc.router({
       );
       return updateTenantRoleHandler(opts);
     }),
+  // assign permission to given role
+  assignPermissionOnTenantRole: privateProcedure
+    .input(ZAssignPermissionOnTenantRoleSchema)
+    .mutation(async (opts) => {
+      const { assignPermissionOnTenantRoleHandler } = await import(
+        '../handlers/roles/role.handler.ts'
+      );
+      return assignPermissionOnTenantRoleHandler(opts);
+    }),
   rolePermissions: publicProcedure
     .input(ZRolePermissionSchema)
     .query(async (opts) => {
@@ -33,5 +44,17 @@ export const roleRouter = trpc.router({
         '../handlers/roles/role.handler.ts'
       );
       return getRolePermissionHandler(opts);
+    }),
+  userBasedPermissions: privateProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(async (opts) => {
+      const { userBasedPermissionsHandler } = await import(
+        '../handlers/roles/role.handler.ts'
+      );
+      return userBasedPermissionsHandler(opts);
     }),
 });

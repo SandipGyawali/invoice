@@ -1,5 +1,6 @@
 'use client';
 import Loader from '@/components/Loader';
+import { useAuthStore } from '@/store/useAuthStore';
 import { useTRPC } from '@/utils/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -48,6 +49,7 @@ function RolePermissionContextProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const authStore = useAuthStore();
   const trpc = useTRPC();
   const router = useRouter();
   const {
@@ -55,6 +57,13 @@ function RolePermissionContextProvider({
     isLoading,
     isSuccess,
   } = useQuery(trpc.permissions.getPermissionSlugs.queryOptions());
+  const { data: assignedPermissionList } = useQuery(
+    trpc.roles.userBasedPermissions.queryOptions({
+      userId: (authStore.info.user.id ?? '') as string,
+    })
+  );
+
+  console.log(assignedPermissionList);
 
   // map the protected routes with the permission slugs
   const permissionModules = useMemo(() => {
@@ -80,9 +89,8 @@ function RolePermissionContextProvider({
   const value = {
     permission: permissionModules,
     hasPermission: (slug: string) => {
-      const md = slug.split(':')[0]; //module
-      const perms = permissionModules.get(md);
-      return perms?.some((perm) => perm.slug === slug) ?? false;
+      const perms = authStore.info.permissions.some((perm) => perm === slug);
+      return perms ? true : false;
     },
   };
 

@@ -17,6 +17,7 @@ type AuthStore = {
   info: {
     user: UserInfo;
     token: Token;
+    permissions: string[];
   };
   setInfo: (data: AuthStore['info']) => void;
 };
@@ -35,6 +36,7 @@ export const useAuthStore = create<AuthStore>()(
           accessToken: null,
           refreshToken: null,
         },
+        permissions: [],
       },
       setInfo: (input) => set({ info: input }),
     }),

@@ -22,3 +22,11 @@ export const ZRolePermissionSchema = z.object({
   roleId: z.number().optional(),
   tenantId: z.string(),
 });
+
+export const ZAssignPermissionOnTenantRoleSchema = z.object({
+  roleId: z.number(),
+  permissions: z.array(z.number()),
+});
+export type TZAssignPermissionOnTenantRoleSchema = z.infer<
+  typeof ZAssignPermissionOnTenantRoleSchema
+>;

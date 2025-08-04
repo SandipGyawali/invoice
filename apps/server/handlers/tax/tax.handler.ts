@@ -4,6 +4,7 @@ import { tax } from '../../models/tax.ts';
 import { TRPCError } from '@trpc/server';
 import type { TZQueryOptionSchema } from '../../schema/queryOptionSchema.ts';
 import type { TRPCContext } from '../../lib/context.ts';
+import type { StatusEnumType } from '../../models/status.enum.ts';
 
 interface TaxOptions {
   ctx: TRPCContext;
@@ -15,7 +16,16 @@ interface CreateTaxOptions extends TaxOptions {
 }
 
 export const createTaxHandler = async ({ input, ctx }: CreateTaxOptions) => {
-  const { tenantId } = ctx;
+  const hashPermissionToCreate = ctx.permissions.some(
+    (perm) => perm === 'tax:create'
+  );
+
+  if (!hashPermissionToCreate) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: "Your don't have permission to create a new tax",
+    });
+  }
 
   // tax name exists
   const taxExists = (
@@ -23,7 +33,10 @@ export const createTaxHandler = async ({ input, ctx }: CreateTaxOptions) => {
       .select()
       .from(tax)
       .where(
-        and(ilike(tax.name, input.name), eq(tax.tenantId, tenantId as string))
+        and(
+          ilike(tax.name, input.name),
+          eq(tax.tenantId, ctx.tenantId as string)
+        )
       )
   ).at(0);
 
@@ -40,7 +53,7 @@ export const createTaxHandler = async ({ input, ctx }: CreateTaxOptions) => {
       name: input.name,
       rate: input.rate,
       applicableTo: input.applicableTo,
-      tenantId: tenantId as string,
+      tenantId: ctx.tenantId as string,
       type: input.type,
     })
     .returning();
@@ -53,31 +66,39 @@ export const createTaxHandler = async ({ input, ctx }: CreateTaxOptions) => {
 };
 
 export const listTaxHandler = async ({ ctx, input }: TaxOptions) => {
-  console.log(ctx);
-
-  const hasPermission = ctx.permissions.some((perm) => perm === `tax:view`);
-
-  console.log(hasPermission);
-
-  if (!hasPermission) {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: "You don't have permission to view taxes",
-    });
-  }
-
   const { tenantId } = ctx;
   const { page, pageSize } = input;
   const offset = (page - 1) * pageSize;
 
+  const query = db.select().from(tax).$dynamic();
+  const filteredConditions = Object.entries(input).reduce(
+    (acc, [key, value]) => {
+      if (value === undefined || value == null) return acc;
+
+      switch (key) {
+        case 'search':
+          value.toString().length > 0
+            ? acc.push(ilike(tax.name, `%${String(value).trim()}%`))
+            : undefined;
+          break;
+        case 'status':
+          acc.push(eq(tax.status, value as StatusEnumType));
+          break;
+      }
+      return acc;
+    },
+    [] as any[]
+  );
+
+  filteredConditions.push(eq(tax.tenantId, tenantId as string));
+  console.log(filteredConditions);
+
+  const builtQuery = query.where(and(...filteredConditions));
+  const countQuery = db.select({ totalCount: count() }).from(tax).$dynamic();
+
   const [result, [{ totalCount }]] = await Promise.all([
-    db
-      .select()
-      .from(tax)
-      .limit(input.pageSize)
-      .offset(offset)
-      .where(eq(tax.tenantId, tenantId as string)),
-    db.select({ totalCount: count() }).from(tax),
+    builtQuery.limit(pageSize).offset(offset).execute(),
+    countQuery.where(and(...filteredConditions)).execute(),
   ]);
 
   return {

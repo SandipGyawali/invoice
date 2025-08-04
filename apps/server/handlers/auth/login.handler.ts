@@ -115,5 +115,6 @@ export const loginUserHandler = async ({ input }: LoginUserOptions) => {
       refreshToken: refreshToken,
       tokenExpiresAt: accessTokenExpiresAt,
     },
+    permissions: slugs,
   };
 };

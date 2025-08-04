@@ -18,7 +18,7 @@ import {
 import { Row } from '@tanstack/react-table';
 import { EllipsisIcon, PenBox } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import type { ITax } from '@/interfaces/ITax';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -26,16 +26,24 @@ import Loader from '@/components/Loader';
 import { useRolePermission } from '@/contexts/rolePermissionContext';
 import { ApplicationModules } from '@/enums/routeModule.enum';
 import { getColumns } from './columns';
+import { useSearchParams } from 'next/navigation';
+import { listQueryOpts } from '@/utils/defaultQueryOpts';
+import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
 
 const AddTax = dynamic(() => import('@/modules/tax/AddTax'));
 const UpdateTax = dynamic(() => import('@/modules/tax/UpdateTax'));
 
 function Page() {
+  const searchParams = useSearchParams();
   const rbac = useRolePermission();
   const t = useTranslations('Tax');
   const trpc = useTRPC();
   const [defaultData, setDefaultData] = useState<Partial<ITax>>({});
   const [openEditSheet, setOpenEditSheet] = useState<boolean>(false);
+
+  const page = searchParams.get('page');
+  const pageSize = searchParams.get('pageSize');
+  const search = searchParams.get('search');
 
   const {
     data: listTax,
@@ -43,10 +51,9 @@ function Page() {
     refetch: refetchList,
   } = useQuery(
     trpc.tax.listTax.queryOptions({
-      page: 1,
-      pageSize: 10,
-      tenantId: 'e1065a8c',
-      search: '',
+      page: page ? Number(page + 1) : DEFAULT_PAGE_INDEX + 1,
+      pageSize: pageSize ? Number(pageSize) : DEFAULT_PAGE_SIZE,
+      search: search ?? '',
     })
   );
 
@@ -105,7 +112,7 @@ function Page() {
               <AddTax refetchTaxList={refetchList} />
             ) : null
           }
-          data={listTax?.data ?? []}
+          data={listTax ?? listQueryOpts}
         />
       </PageContent>
 

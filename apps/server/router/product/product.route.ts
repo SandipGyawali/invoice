@@ -1,5 +1,11 @@
-import { publicProcedure, trpc } from '../../lib/trpc.ts';
+import {
+  ApplicationModules,
+  ModuleOperations,
+} from '@invoice/enums/routeModule.enum';
+import { privateProcedure, publicProcedure, trpc } from '../../lib/trpc.ts';
+import { checkPermission } from '../../middlewares/checkPermission.ts';
 import { ZProductSchema } from '../../schema/productSchema.ts';
+import { zQueryOptionSchema } from '../../schema/queryOptionSchema.ts';
 
 export const productRouter = trpc.router({
   addProduct: publicProcedure
@@ -14,13 +20,15 @@ export const productRouter = trpc.router({
         ctx,
       });
     }),
-  listProduct: publicProcedure.query(async ({ input, ctx }) => {
-    const { listProductHandler } = await import(
-      '../../handlers/product/product.handler.ts'
-    );
-
-    return listProductHandler({
-      ctx,
-    });
-  }),
+  listProduct: privateProcedure
+    .use(
+      checkPermission(`${ApplicationModules.product}:${ModuleOperations.list}`)
+    )
+    .input(zQueryOptionSchema)
+    .query(async (opts) => {
+      const { listProductHandler } = await import(
+        '../../handlers/product/product.handler.ts'
+      );
+      return listProductHandler(opts);
+    }),
 });

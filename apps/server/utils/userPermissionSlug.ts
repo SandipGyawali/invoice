@@ -15,6 +15,8 @@ export const getUserPermissionSlugs = async ({
     .from(userRoles)
     .where(eq(userRoles.userId, userId));
 
+  console.log(userRoleRows);
+
   const roleIds = userRoleRows.map((r) => r.roleId);
   if (roleIds.length === 0) return [];
 

@@ -7,7 +7,7 @@ function PermissionDeniedCard() {
   const router = useRouter();
 
   return (
-    <Card className="max-w-3xl mx-auto mt-24 shadow-sm border border-red-300 bg-red-500/5 dark:bg-red-500/10">
+    <Card className="max-w-3xl mx-5 mx-auto mt-24 shadow-sm border border-red-300 bg-red-500/5 dark:bg-red-500/10">
       <CardHeader className="flex items-center gap-3 text-red-700 dark:text-red-300">
         <ShieldAlert className="h-10 w-10" />
         <CardTitle className="text-2xl font-bold tracking-tight dark:text-white">

@@ -62,6 +62,7 @@ function LoginForm({ className, props }: Props) {
           token: {
             ...data.token,
           },
+          permissions: data.permissions as string[],
         });
         router.replace('/dashboard');
       },

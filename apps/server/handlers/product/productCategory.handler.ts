@@ -1,8 +1,9 @@
-import { and, eq, ilike } from 'drizzle-orm';
+import { and, count, eq, ilike } from 'drizzle-orm';
 import { db } from '../../db/db.ts';
 import { productCategory } from '../../models/product.ts';
 import { TRPCError } from '@trpc/server';
 import type { TZProductCategorySchema } from '../../schema/productSchema.ts';
+import type { StatusEnumType } from '../../models/status.enum.ts';
 
 type ProductCategoryOptions = {
   ctx: {};
@@ -38,10 +39,53 @@ export const addProductCategoryHandler = async ({
   };
 };
 
-export const listProductCategoryHandler = async () => {
-  const result = await db.select().from(productCategory);
+export const listProductCategoryHandler = async ({ ctx, input }) => {
+  const { tenantId } = ctx;
+  const { page, pageSize } = input;
+  const offset = (page - 1) * pageSize;
 
-  return result;
+  const query = db.select().from(productCategory).$dynamic();
+  const filteredConditions = Object.entries(input).reduce(
+    (acc, [key, value]) => {
+      if (value === undefined || value == null) return acc;
+
+      switch (key) {
+        case 'search':
+          value.toString().length > 0
+            ? acc.push(
+                ilike(productCategory.catName, `%${String(value).trim()}%`)
+              )
+            : undefined;
+          break;
+        case 'status':
+          acc.push(eq(productCategory.status, value as StatusEnumType));
+          break;
+      }
+      return acc;
+    },
+    [] as any[]
+  );
+
+  filteredConditions.push(eq(productCategory.tenantId, tenantId as string));
+
+  const builtQuery = query.where(and(...filteredConditions));
+  const countQuery = db
+    .select({ totalCount: count() })
+    .from(productCategory)
+    .$dynamic();
+
+  const [result, [{ totalCount }]] = await Promise.all([
+    builtQuery.limit(pageSize).offset(offset).execute(),
+    countQuery.where(and(...filteredConditions)).execute(),
+  ]);
+
+  return {
+    data: result,
+    total: Number(totalCount),
+    page: page,
+    pageSize: pageSize,
+    message: 'Product Category fetched successfully',
+  };
 };
 
 export const updateProductCategoryHandler = async ({ input, ctx }) => {

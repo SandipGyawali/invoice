@@ -105,6 +105,50 @@ export const updateTenantRoleHandler = async ({ input, ctx }: any) => {
   };
 };
 
+// assign permission on tenantRole
+export const assignPermissionOnTenantRoleHandler = async ({
+  ctx,
+  input,
+}: {
+  ctx: any;
+  input: any;
+}) => {
+  const { tenantId } = ctx;
+  const { roleId, permissions } = input;
+
+  // step 1: delete all existing permissions for the role within the tenant
+  // Step 1: Delete all existing permissions for this role within the tenant
+  await db
+    .delete(rolePermissions)
+    .where(
+      and(
+        eq(rolePermissions.tenantId, tenantId),
+        eq(rolePermissions.roleId, roleId)
+      )
+    );
+
+  if (permissions.length > 0) {
+    const validPermissions = permissions.filter(
+      (id: number): id is number => typeof id === 'number' && !isNaN(id)
+    );
+
+    if (validPermissions.length > 0) {
+      const newPermissions = validPermissions.map((id: number) => ({
+        tenantId,
+        roleId,
+        permissionId: id,
+      }));
+
+      await db.insert(rolePermissions).values(newPermissions);
+    }
+  }
+
+  return {
+    success: true,
+    message: 'Permission assigned Successfully',
+  };
+};
+
 export const getRolePermissionHandler = async ({ input, ctx }: any) => {
   const query = db.select().from(rolePermissions).$dynamic();
 

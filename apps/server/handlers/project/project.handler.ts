@@ -1,47 +1,66 @@
-import { and, eq, ilike } from 'drizzle-orm';
+import { and, count, eq, ilike } from 'drizzle-orm';
 import { db } from '../../db/db.ts';
 import { projects } from '../../models/projectNtask.ts';
 import { TRPCError } from '@trpc/server';
 import type { TZProjectSchemaType } from '../../schema/project.schema.ts';
-import { options } from '../../router/project/project.route.ts';
-import type { z } from 'zod';
+import type { StatusEnumType } from '../../models/status.enum.ts';
+import type { TZQueryOptionSchema } from '../../schema/queryOptionSchema.ts';
+import type { TRPCContext } from '../../lib/context.ts';
 
 interface ProjectHandler {
-  ctx: {};
-  input: z.infer<typeof options>;
+  ctx: TRPCContext;
+  input: TZQueryOptionSchema;
 }
 
 export const listProjectHandler = async ({ ctx, input }: ProjectHandler) => {
-  console.log(input);
-  let query = db.select().from(projects).$dynamic();
+  const { tenantId } = ctx;
+  const { page, pageSize } = input;
+  const offset = (page - 1) * pageSize;
 
+  const query = db.select().from(projects).$dynamic();
   const filteredConditions = Object.entries(input).reduce(
     (acc, [key, value]) => {
       if (value === undefined || value == null) return acc;
-
-      console.log(key, value);
 
       switch (key) {
         case 'id':
           acc.push(eq(projects.id, value as number));
           break;
-        case 'tenantId':
-          acc.push(eq(projects.tenantId, value as string));
+        case 'search':
+          value.toString().length > 0
+            ? acc.push(ilike(projects.name, `%${String(value).trim()}%`))
+            : undefined;
+          break;
+        case 'status':
+          acc.push(eq(projects.status, value as StatusEnumType));
           break;
       }
 
       return acc;
     },
     [] as any[]
-  );
+  ); // Add this below
 
-  const result = await query
-    .where(
-      filteredConditions.length > 0 ? and(...filteredConditions) : undefined
-    )
-    .execute();
+  filteredConditions.push(eq(projects.tenantId, tenantId as string));
 
-  return result;
+  const builtQuery = query.where(and(...filteredConditions));
+  const countQuery = db
+    .select({ totalCount: count() })
+    .from(projects)
+    .$dynamic();
+
+  const [result, [{ totalCount }]] = await Promise.all([
+    builtQuery.limit(pageSize).offset(offset).execute(),
+    countQuery.where(and(...filteredConditions)).execute(),
+  ]);
+
+  return {
+    data: result,
+    total: Number(totalCount),
+    page: page,
+    pageSize: pageSize,
+    message: `Projects Fetched Successfully`,
+  };
 };
 
 interface AddProjectHandler extends ProjectHandler {

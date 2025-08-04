@@ -1,9 +1,10 @@
-import { and, count, eq, ilike, isNotNull } from 'drizzle-orm';
+import { and, count, eq, ilike } from 'drizzle-orm';
 import { db } from '../../db/db.ts';
 import { tax } from '../../models/tax.ts';
 import { TRPCError } from '@trpc/server';
 import type { TZQueryOptionSchema } from '../../schema/queryOptionSchema.ts';
 import type { TRPCContext } from '../../lib/context.ts';
+import type { StatusEnumType } from '../../models/status.enum.ts';
 
 interface TaxOptions {
   ctx: TRPCContext;
@@ -65,15 +66,6 @@ export const createTaxHandler = async ({ input, ctx }: CreateTaxOptions) => {
 };
 
 export const listTaxHandler = async ({ ctx, input }: TaxOptions) => {
-  const hasPermission = ctx.permissions.some((perm) => perm === `tax:view`);
-
-  if (!hasPermission) {
-    throw new TRPCError({
-      code: 'FORBIDDEN',
-      message: "You don't have permission to view taxes",
-    });
-  }
-
   const { tenantId } = ctx;
   const { page, pageSize } = input;
   const offset = (page - 1) * pageSize;
@@ -86,8 +78,11 @@ export const listTaxHandler = async ({ ctx, input }: TaxOptions) => {
       switch (key) {
         case 'search':
           value.toString().length > 0
-            ? acc.push(eq(tax.name, String(value).trim() as string))
+            ? acc.push(ilike(tax.name, `%${String(value).trim()}%`))
             : undefined;
+          break;
+        case 'status':
+          acc.push(eq(tax.status, value as StatusEnumType));
           break;
       }
       return acc;
@@ -102,7 +97,7 @@ export const listTaxHandler = async ({ ctx, input }: TaxOptions) => {
   const countQuery = db.select({ totalCount: count() }).from(tax).$dynamic();
 
   const [result, [{ totalCount }]] = await Promise.all([
-    builtQuery.limit(input.pageSize).offset(offset).execute(),
+    builtQuery.limit(pageSize).offset(offset).execute(),
     countQuery.where(and(...filteredConditions)).execute(),
   ]);
 

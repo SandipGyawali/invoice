@@ -11,7 +11,7 @@ import {
 import { zQueryOptionSchema } from '../../schema/queryOptionSchema.ts';
 
 export const productCategoryRouter = trpc.router({
-  addCategory: publicProcedure
+  addCategory: privateProcedure
     .input(ZProductCategorySchema)
     .mutation(async ({ input, ctx }) => {
       const { addProductCategoryHandler } = await import(
@@ -33,16 +33,12 @@ export const productCategoryRouter = trpc.router({
 
       return listProductCategoryHandler(opts);
     }),
-  updateCategory: publicProcedure
+  updateCategory: privateProcedure
     .input(ZUpdateProductCategorySchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async (opts) => {
       const { updateProductCategoryHandler } = await import(
         '../../handlers/product/productCategory.handler.ts'
       );
-
-      return updateProductCategoryHandler({
-        input,
-        ctx,
-      });
+      return updateProductCategoryHandler(opts);
     }),
 });

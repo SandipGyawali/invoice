@@ -6,12 +6,25 @@ import {
   ZRolePermissionSchema,
   ZRoleSchema,
 } from '../schema/roleSchema.ts';
+import { zQueryOptionSchema } from '../schema/queryOptionSchema.ts';
+import { checkPermission } from '../middlewares/checkPermission.ts';
+import {
+  ApplicationModules,
+  ModuleOperations,
+} from '@invoice/enums/routeModule.enum';
 
 export const roleRouter = trpc.router({
-  tenantRoles: publicProcedure.input(ZRoleSchema).query(async (opts) => {
-    const { roleHandler } = await import('../handlers/roles/role.handler.ts');
-    return roleHandler(opts);
-  }),
+  tenantRoles: privateProcedure
+    .input(
+      zQueryOptionSchema.extend({
+        roleId: z.number().optional().nullable(),
+      })
+    )
+    .use(checkPermission(`${ApplicationModules.role}:${ModuleOperations.list}`))
+    .query(async (opts) => {
+      const { roleHandler } = await import('../handlers/roles/role.handler.ts');
+      return roleHandler(opts);
+    }),
   createTenantRole: publicProcedure
     .input(ZRoleInsertSchema)
     .mutation(async (opts) => {

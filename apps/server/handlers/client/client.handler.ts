@@ -1,9 +1,9 @@
-import { and, eq, ilike } from 'drizzle-orm';
+import { and, count, eq, ilike, or } from 'drizzle-orm';
 import { db } from '../../db/db.ts';
 import { client } from '../../models/client.ts';
-import { products } from '../../models/product.ts';
 import { TRPCError } from '@trpc/server';
 import type { ZClientSchemaInterface } from '../../schema/cientSchema.ts';
+import type { StatusEnumType } from '../../models/status.enum.ts';
 
 interface ClientHandler {
   ctx: {};
@@ -13,10 +13,57 @@ interface AddClientHandler extends ClientHandler {
   input: ZClientSchemaInterface;
 }
 
-export const listClients = async ({ ctx }: ClientHandler) => {
-  const clients = await db.select().from(client);
+export const listClients = async ({ ctx, input }: ClientHandler) => {
+  const { tenantId } = ctx;
+  const { page, pageSize } = input;
+  const offset = (page - 1) * pageSize;
 
-  return clients;
+  const query = db.select().from(client).$dynamic();
+  const filteredConditions = Object.entries(input).reduce(
+    (acc, [key, value]) => {
+      if (value === undefined || value == null) return acc;
+
+      switch (key) {
+        case 'search':
+          value.toString().length > 0
+            ? acc.push(
+                or(
+                  ilike(client.firstName, `%${String(value).trim()}%`),
+                  ilike(client.lastName, `%${String(value).trim()}%`),
+                  ilike(client.address, `%${String(value).trim()}%`),
+                  ilike(client.phone, `%${String(value).trim()}%`),
+                  ilike(client.email, `%${String(value).trim()}%`)
+                )
+              )
+            : undefined;
+          break;
+        case 'status':
+          acc.push(eq(client.status, value as StatusEnumType));
+          break;
+      }
+      return acc;
+    },
+    [] as any[]
+  );
+
+  filteredConditions.push(eq(client.tenantId, tenantId as string));
+  console.log(filteredConditions);
+
+  const builtQuery = query.where(and(...filteredConditions));
+  const countQuery = db.select({ totalCount: count() }).from(client).$dynamic();
+
+  const [result, [{ totalCount }]] = await Promise.all([
+    builtQuery.limit(pageSize).offset(offset).execute(),
+    countQuery.where(and(...filteredConditions)).execute(),
+  ]);
+
+  return {
+    data: result,
+    total: Number(totalCount),
+    page: page,
+    pageSize: pageSize,
+    message: 'Clients Fetched Successfully',
+  };
 };
 
 export const addClientHandler = async ({ input }: AddClientHandler) => {

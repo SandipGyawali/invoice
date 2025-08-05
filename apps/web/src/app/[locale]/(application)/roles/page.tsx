@@ -6,10 +6,8 @@ import {
   PageTitle,
 } from '@/components/page-layout';
 import { useTRPC } from '@/utils/trpc';
-import { Badge } from '@invoice/ui/badge';
 import { Button } from '@invoice/ui/button';
-import { Checkbox } from '@invoice/ui/checkbox';
-import DataTable from '@invoice/ui/data-table';
+import DataTable from '@/components/data-table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,45 +17,39 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@invoice/ui/dropdown-menu';
-import { cn } from '@invoice/ui/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { Row } from '@tanstack/react-table';
 import { EllipsisIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import AddRoleForm from '@/modules/roles/addRole.form';
 import UpdateRoleForm from '@/modules/roles/updateRole.form';
 import { useRouter } from '@/i18n/navigation';
-import { useRolePermission } from '@/contexts/rolePermissionContext';
-import { ApplicationModules } from '@/enums/routeModule.enum';
-
-type IRoles = {
-  id: number;
-  name: string;
-  tenantId: string;
-  createdAt: string;
-};
+import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
+import { useSearchParams } from 'next/navigation';
+import { StatusEnumType } from '@/interfaces/IStatus';
+import { listQueryOpts } from '@/utils/defaultQueryOpts';
+import { IRoles } from '@/interfaces/IRole';
+import { getColumns } from './columns';
 
 function Page() {
+  const searchParams = useSearchParams();
   const trpc = useTRPC();
   const router = useRouter();
-  const { permission } = useRolePermission();
   const [openEditSheet, setOpenEditSheet] = useState(false);
   const [defaultData, setDefaultData] = useState({});
+
+  const page = searchParams.get('page');
+  const pageSize = searchParams.get('pageSize');
+  const search = searchParams.get('search');
+  const status = searchParams.get('status');
+
   const { data: roles } = useQuery(
     trpc.roles.tenantRoles.queryOptions({
-      tenantId: 'e1065a8c',
+      page: page ? Number(page) + 1 : DEFAULT_PAGE_INDEX + 1,
+      pageSize: pageSize ? Number(pageSize) : DEFAULT_PAGE_SIZE,
+      search: search ?? '',
+      status: status == '' ? null : (status as StatusEnumType),
     })
-  );
-
-  const availablePermissions = permission.get(ApplicationModules.user);
-
-  if (!availablePermissions) {
-    return <>Oops you don't have permission to access this </>;
-  }
-  console.log(availablePermissions);
-
-  console.log(
-    availablePermissions.some((perm) => perm.slug.includes('create'))
   );
 
   const handleEditClick = (data: IRoles) => {
@@ -106,67 +98,8 @@ function Page() {
     );
   }
 
-  const columns: ColumnDef<IRoles>[] = useMemo(
-    () => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        size: 28,
-        enableSorting: false,
-        enableHiding: false,
-      },
-      {
-        header: 'Name',
-        accessorKey: 'name',
-        cell: ({ row }) => (
-          <div className="font-medium">{row.getValue('name')}</div>
-        ),
-        size: 150,
-        enableHiding: false,
-      },
-      {
-        header: 'Status',
-        accessorKey: 'status',
-        cell: ({ row }) => (
-          <Badge
-            className={cn(
-              row.getValue('status') === 'Inactive' &&
-                'bg-destructive text-primary-foreground'
-            )}
-          >
-            {row.getValue('status') == 1 ? 'Active' : 'Inactive'}
-          </Badge>
-        ),
-        size: 100,
-      },
-      {
-        id: 'actions',
-        header: 'Actions',
-        cell: ({ row }) => <RowActions row={row} />,
-        size: 60,
-        enableHiding: false,
-      },
-    ],
-    []
-  );
+  // table columns
+  const columns = useMemo(() => getColumns(RowActions), []);
 
   return (
     <PageContainer>
@@ -176,12 +109,8 @@ function Page() {
       <PageContent>
         <DataTable
           columns={columns}
-          data={roles ?? []}
-          actions={
-            availablePermissions.some((prem) =>
-              prem.slug.includes('create')
-            ) && <AddRoleForm />
-          }
+          data={roles ?? listQueryOpts}
+          actions={<AddRoleForm />}
         />
       </PageContent>
 

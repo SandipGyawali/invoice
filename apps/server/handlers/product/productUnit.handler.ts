@@ -4,13 +4,17 @@ import { productUnit } from '../../models/product.ts';
 import type { TZProductUnitSchema } from '../../schema/productSchema.ts';
 import { TRPCError } from '@trpc/server';
 import type { StatusEnumType } from '../../models/status.enum.ts';
+import type { TRPCContext } from '../../lib/context.ts';
 
 type ProductUnitOptions = {
-  ctx: {};
+  ctx: TRPCContext;
   input: TZProductUnitSchema;
 };
 
-export const addProductUnitHandler = async ({ input }: ProductUnitOptions) => {
+export const addProductUnitHandler = async ({
+  input,
+  ctx,
+}: ProductUnitOptions) => {
   const unitExists = (
     await db
       .select()
@@ -29,7 +33,7 @@ export const addProductUnitHandler = async ({ input }: ProductUnitOptions) => {
   await db.insert(productUnit).values({
     name: input.name,
     namePlural: input.namePlural,
-    tenantId: input.tenantId,
+    tenantId: ctx.tenantId,
   });
 
   return {
@@ -49,6 +53,7 @@ type UpdateProductUnitOptions = {
 
 export const updateProductUnitHandler = async ({
   input,
+  ctx,
 }: UpdateProductUnitOptions) => {
   const unitExits = (
     await db
@@ -57,7 +62,7 @@ export const updateProductUnitHandler = async ({
       .where(
         and(
           eq(productUnit.id, input.id),
-          eq(productUnit.tenantId, input.tenantId)
+          eq(productUnit.tenantId, ctx.tenantId)
         )
       )
   ).at(0);
@@ -69,12 +74,15 @@ export const updateProductUnitHandler = async ({
     });
   }
 
-  await db.update(productUnit).set({
-    name: input.name,
-    namePlural: input.namePlural,
-    status: input.status,
-    statusFTR: input.statusFTR,
-  });
+  await db
+    .update(productUnit)
+    .set({
+      name: input.name,
+      namePlural: input.namePlural,
+      status: input.status,
+      statusFTR: input.statusFTR,
+    })
+    .where(eq(productUnit.id, input.id));
 
   return {
     success: true,

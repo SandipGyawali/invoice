@@ -9,17 +9,16 @@ import {
 import { zQueryOptionSchema } from '../../schema/queryOptionSchema.ts';
 
 export const productUnitRouter = trpc.router({
-  addUnit: publicProcedure
+  addUnit: privateProcedure
+    .use(
+      checkPermission(`${ApplicationModules.unit}:${ModuleOperations.create}`)
+    )
     .input(ZProductUnitSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async (opts) => {
       const { addProductUnitHandler } = await import(
         '../../handlers/product/productUnit.handler.ts'
       );
-
-      return addProductUnitHandler({
-        ctx,
-        input,
-      });
+      return addProductUnitHandler(opts);
     }),
   listUnit: privateProcedure
     .use(checkPermission(`${ApplicationModules.unit}:${ModuleOperations.list}`))
@@ -30,7 +29,10 @@ export const productUnitRouter = trpc.router({
       );
       return listProductUnitHandler(opts);
     }),
-  updateUnit: publicProcedure
+  updateUnit: privateProcedure
+    .use(
+      checkPermission(`${ApplicationModules.unit}:${ModuleOperations.update}`)
+    )
     .input(
       ZProductUnitSchema.extend({
         id: z.number(),
@@ -38,14 +40,10 @@ export const productUnitRouter = trpc.router({
         statusFTR: z.string(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async (opts) => {
       const { updateProductUnitHandler } = await import(
         '../../handlers/product/productUnit.handler.ts'
       );
-
-      return updateProductUnitHandler({
-        input,
-        ctx,
-      });
+      return updateProductUnitHandler(opts);
     }),
 });

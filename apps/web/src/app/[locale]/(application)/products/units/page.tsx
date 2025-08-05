@@ -12,7 +12,6 @@ import AddProductUnit from '@/modules/product/AddProductUnit';
 import UpdateProductUnit from '@/modules/product/UpdateProductUnit';
 import { listQueryOpts } from '@/utils/defaultQueryOpts';
 import { useTRPC } from '@/utils/trpc';
-import { Badge } from '@invoice/ui/badge';
 import { Button } from '@invoice/ui/button';
 import DataTable from '@/components/data-table';
 import {
@@ -22,12 +21,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@invoice/ui/dropdown-menu';
-import { cn } from '@invoice/ui/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { ColumnDef, Row } from '@tanstack/react-table';
+import { Row } from '@tanstack/react-table';
 import { EllipsisIcon, PenBox } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { getColumns } from './columns';
 
 function Page() {
   const searchParams = useSearchParams();
@@ -49,7 +48,7 @@ function Page() {
     })
   );
 
-  const handleEditClick = (data) => {
+  const handleEditClick = (data: IProductUnit) => {
     setDefaultData(data);
     setOpenEditSheet(true);
   };
@@ -84,43 +83,7 @@ function Page() {
     );
   }
 
-  const columns: ColumnDef<IProductUnit>[] = [
-    {
-      accessorKey: 'name',
-      header: 'Name',
-      enableSorting: true,
-      enableHiding: true,
-      cell: ({ row }) => row.getValue('name'),
-    },
-    {
-      header: 'Name (Plural)',
-      accessorKey: 'namePlural',
-      enableSorting: true,
-      enableHiding: true,
-      cell: ({ row }) => row.getValue('namePlural'),
-    },
-    {
-      header: 'Status',
-      accessorKey: 'status',
-      cell: ({ row }) => (
-        <Badge
-          className={cn(
-            row.getValue('status') === 'Inactive' &&
-              'bg-destructive text-primary-foreground'
-          )}
-        >
-          {row.getValue('status') == 1 ? 'Active' : 'Inactive'}
-        </Badge>
-      ),
-    },
-    {
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => <RowActions row={row} />,
-      size: 60,
-      enableHiding: false,
-    },
-  ];
+  const columns = useMemo(() => getColumns(RowActions), []);
 
   return (
     <PageContainer>
@@ -131,7 +94,7 @@ function Page() {
         <DataTable
           columns={columns}
           data={productUnitList ?? listQueryOpts}
-          actions={<AddProductUnit />}
+          actions={<AddProductUnit refetch={refetch} />}
         />
       </PageContent>
 

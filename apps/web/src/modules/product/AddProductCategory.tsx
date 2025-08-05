@@ -30,7 +30,7 @@ const _schema = z.object({
   name: z.string().trim().min(3),
 });
 
-function AddProductCategory() {
+function AddProductCategory({ refetch }: { refetch: () => void }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const trpc = useTRPC();
   const form = useForm({
@@ -56,6 +56,7 @@ function AddProductCategory() {
 
     addRole(modifyData, {
       onSuccess: () => {
+        refetch();
         handleFormReset();
         setSheetOpen(false);
       },

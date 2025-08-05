@@ -44,6 +44,7 @@ export function getColumns(
       cell: ({ row }) => {
         return rowActions ? rowActions({ row }) : null;
       },
+      size: 50,
       enableHiding: false,
       enableGlobalFilter: false,
     },

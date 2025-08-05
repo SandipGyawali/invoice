@@ -22,7 +22,6 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   CircleAlertIcon,
-  CircleXIcon,
   Columns3Icon,
   FilterIcon,
   ListFilterIcon,

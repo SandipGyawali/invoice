@@ -5,57 +5,47 @@ import {
   PageHeader,
   PageTitle,
 } from '@/components/page-layout';
+import { ROUTES } from '@/enums/route.enum';
 import { useTRPC } from '@/utils/trpc';
 import { Button } from '@invoice/ui/button';
 import DataTable from '@/components/data-table';
+import { useQuery } from '@tanstack/react-query';
+import { EllipsisIcon, PenBox, Plus } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { getColumns } from './columns';
+import { useMemo } from 'react';
+import { listQueryOpts } from '@/utils/defaultQueryOpts';
+import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
+import { StatusEnumType } from '@/interfaces/IStatus';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@invoice/ui/dropdown-menu';
-import { Row } from '@tanstack/react-table';
-import { EllipsisIcon, PenBox } from 'lucide-react';
-import dynamic from 'next/dynamic';
-import React, { useMemo, useState } from 'react';
-import type { ITax } from '@/interfaces/ITax';
-import { useTranslations } from 'next-intl';
-import { useQuery } from '@tanstack/react-query';
-import Loader from '@/components/Loader';
-import { useRolePermission } from '@/contexts/rolePermissionContext';
 import {
   ApplicationModules,
   ModuleOperations,
 } from '@invoice/enums/routeModule.enum';
-import { getColumns } from './columns';
-import { useSearchParams } from 'next/navigation';
-import { listQueryOpts } from '@/utils/defaultQueryOpts';
-import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
-import { StatusEnumType } from '@/interfaces/IStatus';
+import { useRolePermission } from '@/contexts/rolePermissionContext';
+import { Row } from '@tanstack/react-table';
+import { useRouter } from '@/i18n/navigation';
 
-const AddTax = dynamic(() => import('@/modules/tax/AddTax'));
-const UpdateTax = dynamic(() => import('@/modules/tax/UpdateTax'));
-
-function Page() {
+function Clients() {
   const searchParams = useSearchParams();
-  const { hasPermission } = useRolePermission();
-  const t = useTranslations('Tax');
+  const router = useRouter();
   const trpc = useTRPC();
-  const [defaultData, setDefaultData] = useState<Partial<ITax>>({});
-  const [openEditSheet, setOpenEditSheet] = useState<boolean>(false);
+  const { hasPermission } = useRolePermission();
 
   const page = searchParams.get('page');
   const pageSize = searchParams.get('pageSize');
   const search = searchParams.get('search');
   const status = searchParams.get('status');
 
-  const {
-    data: listTax,
-    isLoading: isTaxListLoading,
-    refetch: refetchList,
-  } = useQuery(
-    trpc.tax.listTax.queryOptions({
+  const { data: clientList } = useQuery(
+    trpc.client.listClient.queryOptions({
       page: page ? Number(page) + 1 : DEFAULT_PAGE_INDEX + 1,
       pageSize: pageSize ? Number(pageSize) : DEFAULT_PAGE_SIZE,
       search: search ?? '',
@@ -63,12 +53,7 @@ function Page() {
     })
   );
 
-  const handleEditClick = (data: ITax) => {
-    setDefaultData(data);
-    setOpenEditSheet(true);
-  };
-
-  function RowActions({ row }: { row: Row<ITax> }) {
+  function RowActions({ row }: { row: Row<any> }) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -90,9 +75,28 @@ function Page() {
             <DropdownMenuGroup>
               <DropdownMenuItem
                 className="flex justify-between"
-                onClick={() => handleEditClick(row.original)}
+                onClick={
+                  () => {}
+                  //  handleEditClick(row.original)
+                }
               >
                 <span>Edit</span>
+                <PenBox />
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          ) : null}
+
+          <DropdownMenuSeparator />
+
+          {hasPermission(
+            `${ApplicationModules.tax}:${ModuleOperations.view}`
+          ) ? (
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className="flex justify-between"
+                onClick={() => router.push(`/clients/${row.original.id}`)}
+              >
+                <span>View</span>
                 <PenBox />
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -105,39 +109,27 @@ function Page() {
   // table columns
   const columns = useMemo(() => getColumns(RowActions), []);
 
-  if (isTaxListLoading) return <Loader className="w-full h-full" />;
-
   return (
     <PageContainer>
       <PageHeader>
-        <PageTitle className="md:text-2xl">{t('taxes')}</PageTitle>
+        <PageTitle className="md:text-2xl">Clients</PageTitle>
       </PageHeader>
       <PageContent>
         <DataTable
           columns={columns}
+          data={clientList ?? listQueryOpts}
           actions={
-            hasPermission(
-              `${ApplicationModules.tax}:${ModuleOperations.create}`
-            ) ? (
-              <AddTax refetchTaxList={refetchList} />
-            ) : null
+            <Button onClick={() => router.push(ROUTES.addClient)}>
+              <Plus />
+              New Client
+            </Button>
           }
-          data={listTax ?? listQueryOpts}
         />
       </PageContent>
 
-      {/* update tax */}
-      <UpdateTax
-        defaultValue={defaultData}
-        handleCloseSheet={() => {
-          setDefaultData({});
-          setOpenEditSheet(false);
-        }}
-        state={openEditSheet}
-        refetchTaxList={() => {}}
-      />
+      {/* edit client section */}
     </PageContainer>
   );
 }
 
-export default Page;
+export default Clients;

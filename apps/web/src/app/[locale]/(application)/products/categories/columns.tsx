@@ -1,10 +1,11 @@
 import { StatusBadge } from '@/components/status-badge';
+import { IProductCategory } from '@/interfaces/IProductCategory';
 import { ColumnDef, Row } from '@tanstack/react-table';
 import React from 'react';
 
 export function getColumns(
-  rowActions?: ({ row }: { row: Row<any> }) => React.ReactNode
-): ColumnDef<any>[] {
+  rowActions?: ({ row }: { row: Row<IProductCategory> }) => React.ReactNode
+): ColumnDef<IProductCategory>[] {
   return [
     {
       accessorKey: 'catName',

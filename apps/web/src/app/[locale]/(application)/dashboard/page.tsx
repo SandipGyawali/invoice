@@ -1,5 +1,7 @@
-function Dashboard() {
-  return <>Dashboard</>;
+import Dashboard from './dashboard';
+
+function Page() {
+  return <Dashboard />;
 }
 
-export default Dashboard;
+export default Page;

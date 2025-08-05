@@ -1,9 +1,9 @@
-import Products from './products';
+import Invoice from './invoice';
 
 function Page() {
   return (
     <>
-      <Products />
+      <Invoice />
     </>
   );
 }

@@ -31,7 +31,6 @@ const _schema = z.object({
   namePlural: z.string().default(''),
   status: z.string().default('1'),
   statusFTR: z.string().default(''),
-  tenantId: z.string(),
 });
 
 type TSchema = z.infer<typeof _schema>;
@@ -66,7 +65,6 @@ function UpdateProductUnit({
   const submit = (input: TSchema) => {
     const modifyData = {
       ...input,
-      tenantId: defaultData.tenantId,
       id: defaultData.id,
     };
 

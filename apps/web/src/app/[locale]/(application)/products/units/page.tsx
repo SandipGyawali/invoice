@@ -48,7 +48,7 @@ function Page() {
     })
   );
 
-  const handleEditClick = (data) => {
+  const handleEditClick = (data: IProductUnit) => {
     setDefaultData(data);
     setOpenEditSheet(true);
   };
@@ -83,7 +83,7 @@ function Page() {
     );
   }
 
-  const columns = useMemo(() => getColumns(() => <>Hello</>), []);
+  const columns = useMemo(() => getColumns(RowActions), []);
 
   return (
     <PageContainer>
@@ -94,7 +94,7 @@ function Page() {
         <DataTable
           columns={columns}
           data={productUnitList ?? listQueryOpts}
-          actions={<AddProductUnit />}
+          actions={<AddProductUnit refetch={refetch} />}
         />
       </PageContent>
 

@@ -31,7 +31,7 @@ const _schema = z.object({
   namePlural: z.string().trim().min(2),
 });
 
-function AddProductUnit() {
+function AddProductUnit({ refetch }: { refetch: () => void }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const trpc = useTRPC();
   const form = useForm({
@@ -52,11 +52,11 @@ function AddProductUnit() {
   const submit = (input: z.infer<typeof _schema>) => {
     const modifyData = {
       ...input,
-      tenantId: 'e1065a8c',
     };
 
     addProductUnit(modifyData, {
-      onSuccess: (data) => {
+      onSuccess: () => {
+        refetch();
         handleFormReset();
         setSheetOpen(false);
       },

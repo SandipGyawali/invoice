@@ -1,3 +1,4 @@
+import { IProductCategory } from '@/interfaces/IProductCategory';
 import { useTRPC } from '@/utils/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@invoice/ui/button';
@@ -39,14 +40,16 @@ function UpdateProductCategory({
 }: {
   setOpenEditSheet: Dispatch<SetStateAction<boolean>>;
   openEditSheet: boolean;
-  defaultData: any;
+  defaultData: IProductCategory;
   refetch: () => void;
 }) {
   const trpc = useTRPC();
-  const form = useForm({
+  const form = useForm<z.infer<typeof _schema>>({
     resolver: zodResolver(_schema),
     defaultValues: {
-      ...defaultData,
+      catName: defaultData.catName,
+      status: defaultData.status,
+      statusFTR: defaultData.statusFTR,
     },
   });
 
@@ -61,7 +64,6 @@ function UpdateProductCategory({
   const submit = (input: z.infer<typeof _schema>) => {
     const modifyData = {
       ...input,
-      tenantId: defaultData.tenantId,
       id: defaultData.id,
     };
 

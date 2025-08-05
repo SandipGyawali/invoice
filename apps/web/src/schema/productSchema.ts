@@ -14,7 +14,7 @@ export const zProductSchema = z
       .number()
       .positive('Purchase price must be positive'),
   })
-  .refine((data) => data.purchasePrice > data.price, {
+  .refine((data) => data.purchasePrice < data.price, {
     message: 'Selling Price must be greater then Purchase price',
     path: ['price'],
   });

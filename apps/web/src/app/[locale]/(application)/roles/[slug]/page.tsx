@@ -32,6 +32,7 @@ import { Badge } from '@invoice/ui/badge';
 import Loader from '@/components/Loader';
 import { usePermissionStore } from '@/store/permissionStore';
 import { Button } from '@invoice/ui/button';
+import { useAuthStore } from '@/store/useAuthStore';
 
 function ModulePermission({
   module,
@@ -157,9 +158,13 @@ function Page() {
   >({});
   const [roleData, setRoleData] = useState(null);
   const queryParams = {
-    tenantId: 'e1065a8c',
     roleId: Number(params.slug ?? 0),
+    page: 1,
+    pageSize: 10,
+    search: '',
+    status: '1',
   };
+  const { info } = useAuthStore();
   const {
     data: roleList,
     isSuccess: roleFetchSuccess,
@@ -178,15 +183,24 @@ function Page() {
 
   useEffect(() => {
     if (roleFetchSuccess) {
-      setRoleData(roleList?.[0] as any);
+      setRoleData(roleList?.data?.[0] as any);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roleFetchSuccess]);
 
-  // useEffect(() => {
-  //   assignedPermissionList?.forEach((id) => setPermission(id.permissionId));
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [assignedRolePermissionSuccess]);
+  useEffect(() => {
+    console.log(info.permissions);
+    info?.permissions?.forEach((slug) => {
+      const hasPermissionSlug = permissionData?.hasPermission(slug);
+      // if (hasPermissionSlug) {
+      console.log(permissionData?.permission?.);
+      // permissionData?.permission?.entries()?.map((val) => {
+      //   console.log(val);
+      // });
+      // }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [info]);
 
   const toggleSection = (section: string): void => {
     setOpenSections((prev) => ({

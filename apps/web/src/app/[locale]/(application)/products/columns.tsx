@@ -35,12 +35,14 @@ export function getColumns(
       accessorKey: 'status',
       cell: ({ row }) => <StatusBadge row={row} />,
     },
-    // {
-    //   id: 'actions',
-    //   header: 'Actions',
-    //   cell: ({ row }) => <RowActions row={row} />,
-    //   size: 60,
-    //   enableHiding: false,
-    // },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        return rowActions ? rowActions({ row }) : null;
+      },
+      size: 60,
+      enableHiding: false,
+    },
   ];
 }

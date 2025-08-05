@@ -15,7 +15,11 @@ import {
 
 export const roleRouter = trpc.router({
   tenantRoles: privateProcedure
-    .input(zQueryOptionSchema)
+    .input(
+      zQueryOptionSchema.extend({
+        roleId: z.number().optional().nullable(),
+      })
+    )
     .use(checkPermission(`${ApplicationModules.role}:${ModuleOperations.list}`))
     .query(async (opts) => {
       const { roleHandler } = await import('../handlers/roles/role.handler.ts');

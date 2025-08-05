@@ -4,14 +4,16 @@ import { productCategory } from '../../models/product.ts';
 import { TRPCError } from '@trpc/server';
 import type { TZProductCategorySchema } from '../../schema/productSchema.ts';
 import type { StatusEnumType } from '../../models/status.enum.ts';
+import type { TRPCContext } from '../../lib/context.ts';
 
 type ProductCategoryOptions = {
-  ctx: {};
+  ctx: TRPCContext;
   input: TZProductCategorySchema;
 };
 
 export const addProductCategoryHandler = async ({
   input,
+  ctx,
 }: ProductCategoryOptions) => {
   const unitExists = (
     await db
@@ -30,7 +32,7 @@ export const addProductCategoryHandler = async ({
 
   await db.insert(productCategory).values({
     catName: input.catName,
-    tenantId: input.tenantId,
+    tenantId: ctx.tenantId,
   });
 
   return {
@@ -99,12 +101,10 @@ export const updateProductCategoryHandler = async ({ input, ctx }) => {
       .where(
         and(
           eq(productCategory.id, input.id),
-          eq(productCategory.tenantId, input.tenantId)
+          eq(productCategory.tenantId, ctx.tenantId)
         )
       )
   ).at(0);
-
-  console.log(exitsCategory);
 
   if (!exitsCategory) {
     throw new TRPCError({
@@ -113,12 +113,20 @@ export const updateProductCategoryHandler = async ({ input, ctx }) => {
     });
   }
 
-  await db.update(productCategory).set({
-    catName: input.catName,
-    status: input.status,
-    statusFTR: input.statusFTR,
-    tenantId: input.tenantId,
-  });
+  await db
+    .update(productCategory)
+    .set({
+      catName: input.catName,
+      status: input.status,
+      statusFTR: input.statusFTR,
+      tenantId: input.tenantId,
+    })
+    .where(
+      and(
+        eq(productCategory.id, input.id),
+        eq(productCategory.tenantId, ctx.tenantId)
+      )
+    );
 
   return {
     message: 'Product Category Updated Successfully',

@@ -33,6 +33,8 @@ export const roleHandler = async ({ input, ctx }: RoleOptions) => {
         case 'status':
           acc.push(eq(roles.status, value as StatusEnumType));
           break;
+        case 'roleId':
+          value && acc.push(eq(roles.id, value as number));
       }
       return acc;
     },

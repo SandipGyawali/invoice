@@ -57,13 +57,6 @@ function RolePermissionContextProvider({
     isLoading,
     isSuccess,
   } = useQuery(trpc.permissions.getPermissionSlugs.queryOptions());
-  const { data: assignedPermissionList } = useQuery(
-    trpc.roles.userBasedPermissions.queryOptions({
-      userId: (authStore.info.user.id ?? '') as string,
-    })
-  );
-
-  console.log(assignedPermissionList);
 
   // map the protected routes with the permission slugs
   const permissionModules = useMemo(() => {

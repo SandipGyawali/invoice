@@ -5,7 +5,7 @@ import {
   PageHeader,
   PageTitle,
 } from '@/components/page-layout';
-import { RolePermissionContext } from '@/contexts/rolePermissionContext';
+import { useRolePermission } from '@/contexts/rolePermissionContext';
 import { useTRPC } from '@/utils/trpc';
 import { Checkbox } from '@invoice/ui/checkbox';
 import {
@@ -24,7 +24,7 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Card, CardContent } from '@invoice/ui/card';
 import { formatDate } from '@/utils/formatDate';
@@ -152,7 +152,7 @@ function RoleCard({ role }: { role: typeof roleData }) {
 function Page() {
   const trpc = useTRPC();
   const params = useParams();
-  const permissionData = useContext(RolePermissionContext);
+  const rbac = useRolePermission();
   const [openSections, setOpenSections] = React.useState<
     Record<string, boolean>
   >({});
@@ -179,8 +179,6 @@ function Page() {
     removePermission,
   } = usePermissionStore();
 
-  console.log(permissionStoreIds);
-
   useEffect(() => {
     if (roleFetchSuccess) {
       setRoleData(roleList?.data?.[0] as any);
@@ -189,18 +187,12 @@ function Page() {
   }, [roleFetchSuccess]);
 
   useEffect(() => {
-    console.log(info.permissions);
+    const allSlugs = Array.from(rbac.permission.values()).flat();
     info?.permissions?.forEach((slug) => {
-      const hasPermissionSlug = permissionData?.hasPermission(slug);
-      // if (hasPermissionSlug) {
-      console.log(permissionData?.permission?.);
-      // permissionData?.permission?.entries()?.map((val) => {
-      //   console.log(val);
-      // });
-      // }
+      const hasPermissionSlug = allSlugs.find((val) => val.slug == slug);
+      if (hasPermissionSlug) setPermission(hasPermissionSlug.id);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [info]);
+  }, [info, rbac, setPermission]);
 
   const toggleSection = (section: string): void => {
     setOpenSections((prev) => ({
@@ -237,7 +229,7 @@ function Page() {
       {roleData && <RoleCard role={roleData} />}
 
       <PageContent className=" flex flex-col gap-4">
-        {Array.from(permissionData?.permission?.entries() || []).map(
+        {Array.from(rbac?.permission?.entries() || []).map(
           ([module, permission], idx) => {
             return (
               <ModulePermission

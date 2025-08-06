@@ -25,51 +25,73 @@ import { Input } from '@invoice/ui/input';
 import { Button } from '@invoice/ui/button';
 import { useForm } from 'react-hook-form';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@invoice/ui/select';
-import {
   zProductSchema,
   ZProductSchemaInterface,
 } from '@/schema/productSchema';
 import { Textarea } from '@invoice/ui/textarea';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/utils/trpc';
 import { SearchableSelect } from '@invoice/ui/select-search';
 import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
-import { useState } from 'react';
-
-interface Props {
-  refetchTaxList: () => void;
-  defaultValue: Partial<any>;
-  handleCloseSheet: () => void;
-  state: boolean;
-}
+import { useEffect, useState } from 'react';
+import Loader from '@/components/Loader';
 
 function UpdateProductForm() {
+  const params = useParams();
   const trpc = useTRPC();
   const router = useRouter();
+  const [productEditData, setProductEditData] = useState<any | null>(null);
+
+  const {
+    data: productUpdateData,
+    isLoading: isProductDataLoading,
+    isSuccess,
+  } = useQuery(
+    trpc.product.listProduct.queryOptions({
+      page: DEFAULT_PAGE_INDEX + 1,
+      pageSize: 1,
+      search: '',
+      status: '1',
+      id: Number(params.id ?? 0),
+    })
+  );
+
   const form = useForm<ZProductSchemaInterface>({
     resolver: zodResolver(zProductSchema),
-    defaultValues: {
-      category: 0,
-      sku: 1,
-      productName: '',
-      description: '',
-      price: 0,
-      taxRate: 0,
-      provider: '',
-      purchasePrice: 0,
-    },
   });
 
-  const [productUnitSearch, setProductUnitSearch] = useState<string>('');
+  console.log(productEditData);
 
-  const { data: productUnitList, isLoading: isProductUnitLoading } = useQuery(
+  // First effect: store the product data in state
+  useEffect(() => {
+    if (isSuccess && productUpdateData?.data?.[0]) {
+      setProductEditData(productUpdateData.data[0]);
+    }
+  }, [isSuccess, productUpdateData]);
+
+  // Second effect: reset form when productEditData is available
+  useEffect(() => {
+    if (productEditData) {
+      form.reset({
+        productName: productEditData.pName,
+        price: productEditData.sPrice,
+        sku: productEditData.sku,
+        category: productEditData.pCatId,
+        description: productEditData.description,
+        provider: productEditData.provider,
+        purchasePrice: productEditData.pPrice,
+        taxRate: productEditData?.taxRate,
+        unit: productEditData.pUnit,
+      });
+    }
+  }, [productEditData, form]);
+
+  const [productUnitSearch, setProductUnitSearch] = useState<string>('');
+  const [productCategorySearch, setProductCategorySearch] =
+    useState<string>('');
+
+  const { data: productUnitList } = useQuery(
     trpc.productUnit.listUnit.queryOptions({
       page: DEFAULT_PAGE_INDEX + 1,
       pageSize: DEFAULT_PAGE_SIZE + 40,
@@ -77,10 +99,23 @@ function UpdateProductForm() {
       status: '1',
     })
   );
-
   const { data: productCategoryList } = useQuery(
-    trpc.productCategory.listCategory.queryOptions()
+    trpc.productCategory.listCategory.queryOptions({
+      page: DEFAULT_PAGE_INDEX + 1,
+      pageSize: DEFAULT_PAGE_SIZE + 40,
+      search: productCategorySearch,
+      status: '1',
+    })
   );
+  const { data: taxList } = useQuery(
+    trpc.tax.listTax.queryOptions({
+      page: DEFAULT_PAGE_INDEX + 1,
+      pageSize: DEFAULT_PAGE_SIZE + 40,
+      search: productCategorySearch,
+      status: '1',
+    })
+  );
+
   const { mutate: addProduct } = useMutation(
     trpc.product.addProduct.mutationOptions()
   );
@@ -95,7 +130,6 @@ function UpdateProductForm() {
       pDescription: values.description,
       providerName: values.provider,
       sku: values.sku,
-      tenantId: 'e1065a8c',
     };
 
     addProduct(modifyData, {
@@ -113,7 +147,7 @@ function UpdateProductForm() {
     // Add your API call here
   };
 
-  console.log(form.watch('category'));
+  if (isProductDataLoading) return <Loader className="w-full h-full" />;
 
   return (
     <PageContainer>
@@ -143,7 +177,19 @@ function UpdateProductForm() {
                       <FormItem>
                         <FormLabel>Category</FormLabel>
                         <FormControl>
-                          <>hello</>
+                          <SearchableSelect
+                            value={Number(field.value ?? '')}
+                            onChange={field.onChange}
+                            onSearch={setProductCategorySearch}
+                            searchValue={productCategorySearch}
+                            options={
+                              productCategoryList?.data?.map((val) => ({
+                                label: val.catName as string,
+                                value: val.id,
+                              })) ?? []
+                            }
+                            placeholder="Select Category"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -193,15 +239,17 @@ function UpdateProductForm() {
                         <FormLabel>Unit</FormLabel>
                         <FormControl>
                           <SearchableSelect
-                            value={field.value?.toString()}
+                            value={Number(field.value ?? '')}
                             onChange={field.onChange}
+                            onSearch={setProductUnitSearch}
+                            searchValue={productUnitSearch}
                             options={
                               productUnitList?.data?.map((val) => ({
                                 label: val.name,
                                 value: val.id,
                               })) ?? []
                             }
-                            placeholder="Select Category"
+                            placeholder="Select Unit"
                           />
                         </FormControl>
                         <FormMessage />
@@ -247,7 +295,19 @@ function UpdateProductForm() {
                       <FormItem>
                         <FormLabel>Tax Rate (%)</FormLabel>
                         <FormControl>
-                          <Input type="number" min={0} step="0.01" {...field} />
+                          <SearchableSelect
+                            value={Number(field.value ?? '')}
+                            onChange={field.onChange}
+                            onSearch={setProductUnitSearch}
+                            searchValue={productUnitSearch}
+                            options={
+                              taxList?.data?.map((val) => ({
+                                label: val.name,
+                                value: val.id,
+                              })) ?? []
+                            }
+                            placeholder="Select Tax"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -300,7 +360,7 @@ function UpdateProductForm() {
                   </Button>
 
                   <Button type="submit" size="sm">
-                    Create Product
+                    Edit Product
                   </Button>
                 </div>
               </form>

@@ -38,7 +38,7 @@ function Page() {
   const searchParams = useSearchParams();
   const trpc = useTRPC();
   const [openEditSheet, setOpenEditSheet] = useState<boolean>(false);
-  const [defaultData, setDefaultData] = useState({});
+  const [defaultData, setDefaultData] = useState<Partial<IProductCategory>>({});
 
   const page = searchParams.get('page');
   const pageSize = searchParams.get('pageSize');
@@ -106,12 +106,14 @@ function Page() {
       </PageContent>
 
       {/* update product-category */}
-      <UpdateProductCategory
-        defaultData={defaultData}
-        openEditSheet={openEditSheet}
-        setOpenEditSheet={() => setOpenEditSheet(false)}
-        refetch={() => refetchProductCategory()}
-      />
+      {openEditSheet && (
+        <UpdateProductCategory
+          defaultData={defaultData}
+          openEditSheet={openEditSheet}
+          setOpenEditSheet={() => setOpenEditSheet(false)}
+          refetch={() => refetchProductCategory()}
+        />
+      )}
     </PageContainer>
   );
 }

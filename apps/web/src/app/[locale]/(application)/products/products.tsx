@@ -15,7 +15,7 @@ import { useSearchParams } from 'next/navigation';
 import { listQueryOpts } from '@/utils/defaultQueryOpts';
 import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
 import { StatusEnumType } from '@/interfaces/IStatus';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { getColumns } from './columns';
 import {
   DropdownMenu,
@@ -24,19 +24,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@invoice/ui/dropdown-menu';
-import {
-  ApplicationModules,
-  ModuleOperations,
-} from '@invoice/enums/routeModule.enum';
 import { useRolePermission } from '@/contexts/rolePermissionContext';
 import { Row } from '@tanstack/react-table';
 import { useRouter } from '@/i18n/navigation';
-import UpdateProductForm from '@/modules/product/UpdateProduct';
 
 function Products() {
   const searchParams = useSearchParams();
   const trpc = useTRPC();
-  const { hasPermission } = useRolePermission();
   const router = useRouter();
 
   const page = searchParams.get('page');
@@ -97,7 +91,7 @@ function Products() {
       <PageHeader>
         <PageTitle className="md:text-2xl">Products</PageTitle>
       </PageHeader>
-      <PageContent>
+      <PageContent className="max-w-7xl overflow-x-auto">
         <DataTable
           columns={columns}
           data={productList ?? listQueryOpts}

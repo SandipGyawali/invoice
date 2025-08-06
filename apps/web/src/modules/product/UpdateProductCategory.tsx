@@ -53,6 +53,9 @@ function UpdateProductCategory({
     },
   });
 
+  console.log(defaultData);
+  console.log(form.watch('catName'));
+
   const { mutate: updateCategory, isPending } = useMutation(
     trpc.productCategory.updateCategory.mutationOptions()
   );

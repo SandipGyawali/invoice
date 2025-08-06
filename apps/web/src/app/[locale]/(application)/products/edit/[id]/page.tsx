@@ -1,5 +1,11 @@
+import UpdateProductForm from '@/modules/product/UpdateProduct';
+
 function Page() {
-  return <>Edit</>;
+  return (
+    <>
+      <UpdateProductForm />
+    </>
+  );
 }
 
 export default Page;

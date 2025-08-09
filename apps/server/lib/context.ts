@@ -3,14 +3,14 @@ import jwt from 'jsonwebtoken';
 import { ENVIRONMENT } from './env.ts';
 
 export type TRPCContext = {
-  tenantId?: string | null;
-  userId?: string | null;
+  tenantId: string;
+  userId: string;
   permissions: string[];
 };
 
 type JWTPayload = {
-  tenantId?: string | null;
-  userId?: string | null;
+  tenantId: string;
+  userId: string;
   permissions: string[];
 };
 
@@ -38,9 +38,17 @@ export const createContext = ({
     }
   }
 
-  return {
-    tenantId: decodedPayload?.tenantId ?? null,
-    userId: decodedPayload?.userId ?? null,
-    permissions: decodedPayload?.permissions ?? [],
-  };
+  if (!decodedPayload) {
+    return {
+      tenantId: null,
+      userId: null,
+      permissions: [],
+    };
+  } else {
+    return {
+      tenantId: decodedPayload.tenantId,
+      userId: decodedPayload.userId,
+      permissions: decodedPayload.permissions,
+    };
+  }
 };

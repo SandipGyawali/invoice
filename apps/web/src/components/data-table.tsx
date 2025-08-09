@@ -97,15 +97,15 @@ interface DataTableProps<TData, TValue> {
   actions?: React.ReactNode;
 }
 
-const statusFilterFn: FilterFn<Item> = (
-  row,
-  columnId,
-  filterValue: string[]
-) => {
-  if (!filterValue?.length) return true;
-  const status = row.getValue(columnId) as string;
-  return filterValue.includes(status);
-};
+// const statusFilterFn: FilterFn<Item> = (
+//   row,
+//   columnId,
+//   filterValue: string[]
+// ) => {
+//   if (!filterValue?.length) return true;
+//   const status = row.getValue(columnId) as string;
+//   return filterValue.includes(status);
+// };
 
 export default function DataTable<TData, TValue>({
   columns,
@@ -272,7 +272,7 @@ export default function DataTable<TData, TValue>({
           {/* Filter by status */}
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline">
+              <Button disabled variant="outline">
                 <FilterIcon
                   className="-ms-1 opacity-60"
                   size={16}

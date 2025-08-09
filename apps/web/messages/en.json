@@ -4,7 +4,8 @@
         "appearance": "Appearance",
         "profile": "Profile",
         "settings": "Settings",
-        "logout": "Logout"
+        "logout": "Logout",
+        "password": "Password"
     },
     "button": {
         "submit": "Submit",

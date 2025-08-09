@@ -1,4 +1,3 @@
-'use client';
 import { ITax } from '@/interfaces/ITax';
 import { Badge } from '@invoice/ui/badge';
 import { cn } from '@invoice/ui/lib/utils';

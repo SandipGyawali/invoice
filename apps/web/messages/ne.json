@@ -4,7 +4,8 @@
         "appearance": "रूपरंग",
         "profile": "प्रोफाइल",
         "settings": "सेटिङ",
-        "logout": "लग-आउट"
+        "logout": "लग-आउट",
+        "password": "पासवर्ड"
     },
     "button": {
         "submit": "बुझाउनुहोस्",

@@ -58,7 +58,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     modules: [
       {
         title: t('invoices'),
-        url: '/invoices',
+        url: '/invoice',
         icon: FileText,
         permission: `${ApplicationModules.invoice}:${ModuleOperations.list}`,
       },
@@ -129,7 +129,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     navSecondary: [
       {
         title: t('settings'),
-        url: '/settings',
+        url: '/settings/profile',
         icon: IconSettings,
         permission: '',
       },

@@ -7,7 +7,7 @@ import {
   CardFooter,
 } from '@invoice/ui/card';
 import { Button } from '@invoice/ui/button';
-import { AlertTriangle, Home } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Home } from 'lucide-react';
 
 export function AccessDeniedCard() {
   return (
@@ -23,6 +23,17 @@ export function AccessDeniedCard() {
         </p>
       </CardContent>
       <CardFooter className="flex justify-center gap-3">
+        <Button
+          onClick={() => {
+            if (typeof window !== undefined) {
+              window.history.back();
+            }
+          }}
+        >
+          <ArrowLeft />
+          Back
+        </Button>
+
         <Button
           variant="destructive"
           onClick={() => {

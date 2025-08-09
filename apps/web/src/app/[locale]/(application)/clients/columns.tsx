@@ -1,9 +1,10 @@
 import { StatusBadge } from '@/components/status-badge';
+import { IClient } from '@/interfaces/IClient';
 import { ColumnDef, Row } from '@tanstack/react-table';
 
 export function getColumns(
-  rowActions?: ({ row }: { row: Row<any> }) => React.ReactNode
-): ColumnDef<any> {
+  rowActions?: ({ row }: { row: Row<IClient> }) => React.ReactNode
+): ColumnDef<IClient>[] {
   return [
     {
       accessorKey: 'firstName',

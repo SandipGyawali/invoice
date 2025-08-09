@@ -1,9 +1,10 @@
 import { StatusBadge } from '@/components/status-badge';
+import { IProductUnit } from '@/interfaces/IProductUnit';
 import { ColumnDef, Row } from '@tanstack/react-table';
 
 export function getColumns(
-  rowActions?: ({ row }: { row: Row<any> }) => React.ReactNode
-): ColumnDef<any>[] {
+  rowActions?: ({ row }: { row: Row<IProductUnit> }) => React.ReactNode
+): ColumnDef<IProductUnit>[] {
   return [
     {
       accessorKey: 'name',

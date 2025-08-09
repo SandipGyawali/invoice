@@ -169,6 +169,13 @@
       "when": 1752578148754,
       "tag": "0023_free_satana",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1754462270294,
+      "tag": "0024_material_white_queen",
+      "breakpoints": true
     }
   ]
 }

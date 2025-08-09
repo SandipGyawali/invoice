@@ -15,7 +15,7 @@ interface AddProductHandler extends ProductHandler {
   input: any;
 }
 
-export const addProductHandler = async ({ input }: AddProductHandler) => {
+export const addProductHandler = async ({ input, ctx }: AddProductHandler) => {
   const productExists = (
     await db.select().from(products).where(ilike(products.pName, input.pName))
   ).at(0);
@@ -26,6 +26,8 @@ export const addProductHandler = async ({ input }: AddProductHandler) => {
       message: `Product with the provided ${input.pName} name already exists`,
     });
   }
+
+  console.log(input);
 
   const [newProduct] = await db
     .insert(products)
@@ -38,7 +40,8 @@ export const addProductHandler = async ({ input }: AddProductHandler) => {
       pDescription: input.pDescription,
       providerName: input.providerName,
       sku: input.sku,
-      tenantId: input.tenantId,
+      taxRate: input.taxRate,
+      tenantId: ctx.tenantId,
     })
     .returning();
 
@@ -77,6 +80,8 @@ export const listProductHandler = async ({ ctx, input }: ProductHandler) => {
         case 'status':
           acc.push(eq(products.status, value as StatusEnumType));
           break;
+        case 'id':
+          acc.push(eq(products.id, value as number));
       }
       return acc;
     },

@@ -31,6 +31,13 @@ function SettingsLayout({ children }: { children: React.ReactNode }) {
             <Link href="/settings/appearance">{t('appearance')}</Link>
           </div>
         </TabsTrigger>
+
+        <TabsTrigger asChild value="/settings/password">
+          <div className="flex items-center">
+            <IconEyeSearch />
+            <Link href="/settings/password">{t('password')}</Link>
+          </div>
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent className="mt-4" value={pathname}>

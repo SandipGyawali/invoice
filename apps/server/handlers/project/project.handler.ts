@@ -63,13 +63,11 @@ export const listProjectHandler = async ({ ctx, input }: ProjectHandler) => {
   };
 };
 
-interface AddProjectHandler extends ProjectHandler {
+interface _AddProjectHandler extends Pick<ProjectHandler, 'ctx'> {
   input: TZProjectSchemaType;
 }
 
-export const addProjectHandler = async ({ ctx, input }: AddProjectHandler) => {
-  console.log(input);
-
+export const addProjectHandler = async ({ ctx, input }: _AddProjectHandler) => {
   const projectExists = (
     await db.select().from(projects).where(ilike(projects.name, input.name))
   ).at(0);
@@ -90,7 +88,7 @@ export const addProjectHandler = async ({ ctx, input }: AddProjectHandler) => {
       description: input.description,
       pStatus: input.pStatus,
       endDate: input.endDate,
-      tenantId: input.tenantId,
+      tenantId: ctx.tenantId,
     })
     .returning();
 

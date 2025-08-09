@@ -7,11 +7,13 @@ export const ApplicationModules = {
   product: 'product',
   productCategory: 'product-category',
   project: 'project',
+  task: 'task',
   unit: 'unit',
   client: 'client',
   invoice: 'invoice',
   quotation: 'quotation',
   dashboard: 'dashboard',
+  permission: 'permission',
 } as const;
 
 export const ModuleOperations = {

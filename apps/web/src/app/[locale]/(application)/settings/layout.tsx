@@ -13,7 +13,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   const t = useTranslations('Settings');
 
   return (
-    <PageContainer>
+    <PageContainer className="!max-w-5xl">
       <PageHeader>
         <div className="flex items-start gap-4">
           <div className="flex-1">

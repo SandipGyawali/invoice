@@ -21,7 +21,7 @@ export interface Option {
 }
 
 interface SearchableSelectProps {
-  value: string;
+  value: string | number;
   onChange: (value: string) => void;
   options: Option[];
   placeholder?: string;
@@ -85,7 +85,7 @@ export const SearchableSelect = ({
               {options.map((opt) => (
                 <CommandItem
                   key={opt.value}
-                  value={opt.value.toString()}
+                  value={opt.value?.toString()}
                   onSelect={(val) => {
                     onChange(val === value ? '' : val);
                     setOpen(false);

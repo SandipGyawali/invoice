@@ -9,6 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { tenants } from './tenant.ts';
 import { statusEnum } from './status.enum.ts';
+import { tax } from './tax.ts';
 
 /**
  * product category table schema
@@ -54,6 +55,7 @@ export const products = pgTable('products', {
   pUnit: integer('p_unit')
     .references(() => productUnit.id)
     .notNull(),
+  taxRate: integer('tax_rate').references(() => tax.id),
   pPrice: decimal('p_price').notNull(),
   sPrice: decimal('s_price').notNull(),
   pDescription: text('p_description').default(''),

@@ -95,7 +95,7 @@ function AddProductForm() {
       pDescription: values.description,
       providerName: values.provider,
       sku: values.sku,
-      tenantId: 'e1065a8c',
+      taxRate: values.taxRate ?? null,
     };
 
     addProduct(modifyData, {
@@ -142,7 +142,7 @@ function AddProductForm() {
                         <FormLabel>Category</FormLabel>
                         <FormControl>
                           <SearchableSelect
-                            value={field.value?.toString()}
+                            value={Number(field.value ?? '')}
                             onChange={field.onChange}
                             onSearch={setProductCategorySearch}
                             searchValue={productCategorySearch}
@@ -203,7 +203,7 @@ function AddProductForm() {
                         <FormLabel>Unit</FormLabel>
                         <FormControl>
                           <SearchableSelect
-                            value={field.value?.toString()}
+                            value={Number(field.value ?? '')}
                             onChange={field.onChange}
                             onSearch={setProductUnitSearch}
                             searchValue={productUnitSearch}
@@ -260,7 +260,7 @@ function AddProductForm() {
                         <FormLabel>Tax Rate (%)</FormLabel>
                         <FormControl>
                           <SearchableSelect
-                            value={field.value?.toString()}
+                            value={Number(field.value ?? '')}
                             onChange={field.onChange}
                             onSearch={setProductUnitSearch}
                             searchValue={productUnitSearch}

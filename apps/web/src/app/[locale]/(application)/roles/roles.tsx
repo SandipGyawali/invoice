@@ -5,18 +5,9 @@ import {
   PageHeader,
   PageTitle,
 } from '@/components/page-layout';
-import { ROUTES } from '@/enums/route.enum';
 import { useTRPC } from '@/utils/trpc';
 import { Button } from '@invoice/ui/button';
 import DataTable from '@/components/data-table';
-import { useQuery } from '@tanstack/react-query';
-import { EllipsisIcon, PenBox, Plus } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
-import { getColumns } from './columns';
-import { useMemo } from 'react';
-import { listQueryOpts } from '@/utils/defaultQueryOpts';
-import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
-import { StatusEnumType } from '@/interfaces/IStatus';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,28 +16,40 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@invoice/ui/dropdown-menu';
+import { useQuery } from '@tanstack/react-query';
+import { Row } from '@tanstack/react-table';
+import { EllipsisIcon } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import AddRoleForm from '@/modules/roles/addRole.form';
+import UpdateRoleForm from '@/modules/roles/updateRole.form';
+import { useRouter } from '@/i18n/navigation';
+import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
+import { useSearchParams } from 'next/navigation';
+import { StatusEnumType } from '@/interfaces/IStatus';
+import { listQueryOpts } from '@/utils/defaultQueryOpts';
+import { IRoles } from '@/interfaces/IRole';
+import { getColumns } from './columns';
+import { useRolePermission } from '@/contexts/rolePermissionContext';
 import {
   ApplicationModules,
   ModuleOperations,
 } from '@invoice/enums/routeModule.enum';
-import { useRolePermission } from '@/contexts/rolePermissionContext';
-import { Row } from '@tanstack/react-table';
-import { useRouter } from '@/i18n/navigation';
-import { IClient } from '@/interfaces/IClient';
 
-function Clients() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const trpc = useTRPC();
+function RolesPage() {
   const { hasPermission } = useRolePermission();
+  const searchParams = useSearchParams();
+  const trpc = useTRPC();
+  const router = useRouter();
+  const [openEditSheet, setOpenEditSheet] = useState(false);
+  const [defaultData, setDefaultData] = useState({});
 
   const page = searchParams.get('page');
   const pageSize = searchParams.get('pageSize');
   const search = searchParams.get('search');
   const status = searchParams.get('status');
 
-  const { data: clientList } = useQuery(
-    trpc.client.listClient.queryOptions({
+  const { data: roles } = useQuery(
+    trpc.roles.tenantRoles.queryOptions({
       page: page ? Number(page) + 1 : DEFAULT_PAGE_INDEX + 1,
       pageSize: pageSize ? Number(pageSize) : DEFAULT_PAGE_SIZE,
       search: search ?? '',
@@ -54,7 +57,12 @@ function Clients() {
     })
   );
 
-  function RowActions({ row }: { row: Row<IClient> }) {
+  const handleEditClick = (data: IRoles) => {
+    setDefaultData(data);
+    setOpenEditSheet(true);
+  };
+
+  function RowActions({ row }: { row: Row<IRoles> }) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -71,34 +79,23 @@ function Clients() {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {hasPermission(
-            `${ApplicationModules.tax}:${ModuleOperations.update}`
+            `${ApplicationModules.role}:${ModuleOperations.update}`
           ) ? (
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                className="flex justify-between"
-                onClick={
-                  () => {}
-                  //  handleEditClick(row.original)
-                }
-              >
+              <DropdownMenuItem onClick={() => handleEditClick(row.original)}>
                 <span>Edit</span>
-                <PenBox />
               </DropdownMenuItem>
             </DropdownMenuGroup>
           ) : null}
-
           <DropdownMenuSeparator />
-
           {hasPermission(
-            `${ApplicationModules.tax}:${ModuleOperations.view}`
+            `${ApplicationModules.permission}:${ModuleOperations.list}`
           ) ? (
             <DropdownMenuGroup>
               <DropdownMenuItem
-                className="flex justify-between"
-                onClick={() => router.push(`/clients/${row.original.id}`)}
+                onClick={() => router.push(`/roles/${row.original.id}`)}
               >
-                <span>View</span>
-                <PenBox />
+                <span>Permissions</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           ) : null}
@@ -113,28 +110,32 @@ function Clients() {
   return (
     <PageContainer>
       <PageHeader>
-        <PageTitle className="md:text-2xl">Clients</PageTitle>
+        <PageTitle className="md:text-2xl">User Roles</PageTitle>
       </PageHeader>
       <PageContent>
         <DataTable
           columns={columns}
-          data={clientList ?? listQueryOpts}
+          data={roles ?? listQueryOpts}
           actions={
             hasPermission(
-              `${ApplicationModules.client}:${ModuleOperations.create}`
+              `${ApplicationModules.role}:${ModuleOperations.create}`
             ) ? (
-              <Button onClick={() => router.push(ROUTES.addClient)}>
-                <Plus />
-                New Client
-              </Button>
+              <AddRoleForm />
             ) : null
           }
         />
       </PageContent>
 
-      {/* edit client section */}
+      {/* edit form sheet */}
+      {openEditSheet && (
+        <UpdateRoleForm
+          openEditSheet={openEditSheet}
+          setOpenEditSheet={setOpenEditSheet}
+          defaultData={defaultData}
+        />
+      )}
     </PageContainer>
   );
 }
 
-export default Clients;
+export default RolesPage;

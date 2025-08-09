@@ -63,7 +63,6 @@ function AddProjectForm() {
     const modifyData = {
       ...values,
       endDate: values.endDate,
-      tenantId: 'e1065a8c',
     };
     console.log('Creating project:', modifyData);
 

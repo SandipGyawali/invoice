@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@invoice/ui/dropdown-menu';
 import { Row } from '@tanstack/react-table';
-import { EllipsisIcon, PenBox } from 'lucide-react';
+import { EllipsisIcon, Info, PenBox } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import React, { useMemo, useState } from 'react';
 import type { ITax } from '@/interfaces/ITax';
@@ -33,6 +33,8 @@ import { useSearchParams } from 'next/navigation';
 import { listQueryOpts } from '@/utils/defaultQueryOpts';
 import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE } from '@/constants';
 import { StatusEnumType } from '@/interfaces/IStatus';
+import { InfoAlert } from '@/components/info-alert';
+import { TaxAlertDescription } from '@/modules/tax/TaxAlertDescription';
 
 const AddTax = dynamic(() => import('@/modules/tax/AddTax'));
 const UpdateTax = dynamic(() => import('@/modules/tax/UpdateTax'));
@@ -44,6 +46,7 @@ function Page() {
   const trpc = useTRPC();
   const [defaultData, setDefaultData] = useState<Partial<ITax>>({});
   const [openEditSheet, setOpenEditSheet] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   const page = searchParams.get('page');
   const pageSize = searchParams.get('pageSize');
@@ -110,9 +113,26 @@ function Page() {
   return (
     <PageContainer>
       <PageHeader>
-        <PageTitle className="md:text-2xl">{t('taxes')}</PageTitle>
+        <PageTitle className="md:text-2xl">
+          {t('taxes')}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="-mx-2"
+            onClick={() => setShowAlert((prev) => !prev)}
+            aria-label="Show information"
+          >
+            <Info className="h-5 w-5" />
+          </Button>
+        </PageTitle>
       </PageHeader>
       <PageContent>
+        <InfoAlert
+          title="About Taxes"
+          description={<TaxAlertDescription />}
+          show={showAlert}
+          setShow={setShowAlert}
+        />
         <DataTable
           columns={columns}
           actions={

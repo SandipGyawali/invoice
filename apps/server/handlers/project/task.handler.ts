@@ -3,9 +3,10 @@ import { db } from '../../db/db.ts';
 import { projects, tasks } from '../../models/projectNtask.ts';
 import { TRPCError } from '@trpc/server';
 import type { TZTaskUpdateSchemaType } from '../../schema/project.schema.ts';
+import type { TRPCContext } from '../../lib/context.ts';
 
 interface TaskHandler {
-  ctx: {};
+  ctx: TRPCContext;
 }
 
 interface TaskHandlerById extends TaskHandler {

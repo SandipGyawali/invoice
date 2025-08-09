@@ -35,7 +35,7 @@ export const ZProductSchema = z.object({
   sPrice: z.number(),
   pDescription: z.string().nullable().default(''),
   providerName: z.string().nullable().default(''),
-  tenantId: z.string(),
+  taxRate: z.number().optional().nullable(),
 });
 
 export type TZProductInterface = z.infer<typeof ZProductSchema>;

@@ -5,7 +5,6 @@ export const zProjectSchema = z
   .object({
     name: z.string(),
     description: z.string().optional(),
-    tenantId: z.string(),
     startDate: z.coerce.date(),
     endDate: z.coerce.date(),
     clientId: z.number(),

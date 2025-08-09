@@ -8,18 +8,12 @@ import { ZProductSchema } from '../../schema/productSchema.ts';
 import { zQueryOptionSchema } from '../../schema/queryOptionSchema.ts';
 
 export const productRouter = trpc.router({
-  addProduct: publicProcedure
-    .input(ZProductSchema)
-    .mutation(async ({ input, ctx }) => {
-      const { addProductHandler } = await import(
-        '../../handlers/product/product.handler.ts'
-      );
-
-      return addProductHandler({
-        input,
-        ctx,
-      });
-    }),
+  addProduct: privateProcedure.input(ZProductSchema).mutation(async (opts) => {
+    const { addProductHandler } = await import(
+      '../../handlers/product/product.handler.ts'
+    );
+    return addProductHandler(opts);
+  }),
   listProduct: privateProcedure
     .use(
       checkPermission(`${ApplicationModules.product}:${ModuleOperations.list}`)
